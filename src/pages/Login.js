@@ -14,13 +14,17 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.get('http://localhost:8000/api/login')
-    .then ((response) => {
-        const allNotes = response;
-        console.log(allNotes)
-        navigate('/dashboard');
-    })
-    .catch(error => console.error(`Error: ${error}`));
+    try {
+      const response = await axios.post('http://localhost:8000/api/login', {
+        email: values.email,
+        password: values.password,
+      });
+
+      console.log(response.data);
+      navigate('/dashboard'); 
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+    }
   };
 
   return (
