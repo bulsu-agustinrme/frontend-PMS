@@ -28,55 +28,56 @@ const handleSubmit = async (e) => {
 };
 
   return (
-<div className="login-wrapper">
-  <div className="login-left">
-    <div className="login-form-container">
-      <img src={require('assets/logo.png')} alt="Logo" className="login-logo" />
+    <div className="login-wrapper">
+      <div className="login-container">
+        <div className="login-left">
+          <div className="login-form-container">
+            <img src={require('assets/logo.png')} alt="Logo" className="login-logo" />
+            <h2 className="login-title">Welcome back!</h2>
+            <p className="login-subtitle">Enter your credentials to access your account</p>
 
-      <h2 className="login-title">Welcome back!</h2>
-      <p className="login-subtitle">Enter your credentials to access your account</p>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="email"
+                name="email"
+                placeholder="Email address"
+                value={values.email}
+                onChange={handleInput}
+                className="login-input"
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={values.password}
+                onChange={handleInput}
+                className="login-input"
+              />
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email address"
-          value={values.email}
-          onChange={handleInput}
-          className="login-input"
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={values.password}
-          onChange={handleInput}
-          className="login-input"
-        />
+              <div className="login-options">
+                <label>
+                  <input type="checkbox" /> Remember me
+                </label>
+              </div>
 
-        <div className="login-options">
-          <label>
-            <input type="checkbox" /> Remember me
-          </label>
+              <button type="submit" className="login-button">➔ Sign In</button>
+              <p className="forgot-link">
+                <Link to="/forgotpassword">Forgot Password?</Link>
+              </p>
+            </form>
+          </div>
         </div>
 
-        <button type="submit" className="login-button">➔ Sign In</button>
-        <p className="forgot-link">
-          <Link to="/forgotpassword">Forgot Password?</Link>
-        </p>
-      </form>
+        <div className="login-right">
+          <div className="login-overlay">
+            <h3 className="login-banner-title">BULACAN STATE UNIVERSITY</h3>
+            <h4 className="login-banner-sub">PARKING MANAGEMENT SYSTEM</h4>
+            <p className="login-banner-tagline">Drive In. Park Smart. Move On.</p>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div className="login-right">
-    <div className="login-overlay">
-      <h3 className="login-banner-title">BULACAN STATE UNIVERSITY</h3>
-      <h4 className="login-banner-sub">PARKING MANAGEMENT SYSTEM</h4>
-      <p className="login-banner-tagline">Drive In. Park Smart. Move On.</p>
-    </div>
-  </div>
-</div>
-  )
+  );
 }
 
 export default Login;
