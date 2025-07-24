@@ -1,5 +1,3 @@
-/* src/assets/Login.css */
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 
 * {
@@ -13,11 +11,27 @@ body {
   background: #f4f6f8;
 }
 
-/* Layout */
+/* Wrapper centers the page */
 .login-wrapper {
   display: flex;
+  justify-content: center;
+  align-items: center;
   height: 100vh;
   width: 100%;
+  padding: 40px;
+  background-color: #f4f6f8;
+}
+
+/* Login content container */
+.login-container {
+  display: flex;
+  width: 90%;
+  max-width: 1000px;
+  height: 600px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  background-color: white;
 }
 
 /* Left side: Form */
@@ -26,7 +40,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.95);
   padding: 40px;
 }
 
@@ -126,6 +140,7 @@ body {
   flex: 1;
   background: url('assets/background.jpg') center center / cover no-repeat;
   position: relative;
+  height: 100%;
 }
 
 .login-overlay {
@@ -139,6 +154,7 @@ body {
   color: white;
   text-align: center;
   padding: 30px;
+  transition: background-color 0.3s ease;
 }
 
 .login-banner-title {
@@ -157,10 +173,8 @@ body {
 }
 
 .login-logo {
-  width: 160px;         /* Increase width */
-  height: auto;         /* Keep aspect ratio */
-  margin: 0 auto 25px auto;  /* Add space below logo */
+  width: 160px;
+  height: auto;
+  margin: 0 auto 25px auto;
   display: block;
 }
-
-

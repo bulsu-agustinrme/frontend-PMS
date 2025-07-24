@@ -8,6 +8,9 @@ import EditParking from 'pages/editparkingspace';
 import ForgotPassword from 'pages/forgotpassword'; 
 import Messages from 'pages/messages';
 import PendingList from 'pages/pendinglist';
+import Settings from 'pages/settings';
+import Notifications from 'pages/notifications';
+import CustomizedParking from 'pages/customizedparking';
 
 const MainRoutes = () =>{
     return(
@@ -22,6 +25,9 @@ const MainRoutes = () =>{
             <Route path="/editparkingspace" element={<EditParking />}/>
             <Route path="/messages" element={<Messages />}/>
             <Route path="/pendinglist" element={<PendingList />}/>
+            <Route path="/settings" element={<Settings />}/>
+            <Route path="/notifications" element={<Notifications />}/>
+            <Route path="/customizedparking" element={<CustomizedParking />}/>
             </Route>
             
     </Routes>
