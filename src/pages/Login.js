@@ -12,17 +12,20 @@ function Login() {
     setValues(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    axios.get('http://localhost:8000/api/login')
-    .then ((response) => {
-        const allNotes = response;
-//add our data to state 
-      console.log(allNotes)
-      navigate('/dashboard');
-    })
-.catch(error => console.error('Error: $(error)' ));
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await axios.post('http://localhost:8000/api/login', {
+      email: values.email,
+      password: values.password,
+    });
+
+    console.log(response.data)
+    navigate('/dashboard'); 
+  } catch (error) {
+    console.error(error.response?.data || error.message);
   }
+};
 
   return (
 <div className="login-wrapper">

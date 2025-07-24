@@ -1,52 +1,21 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import 'assets/userlist.css';
 
-const userData = [
-  {
-    name: 'Juan Dela Cruz',
-    studentno: '2026100837',
-    phonenumber: '09842751837',
-    department: 'College of Nursing',
-    position: 'Student',
-    vehicletype: 'SUV',
-    platenumber: 'HWB 2389',
-  },
-  {
-    name: 'Sanya Lopez',
-    studentno: '2026100839',
-    phonenumber: '09998887777',
-    department: 'College of Science',
-    position: 'Faculty',
-    vehicletype: 'SUV',
-    platenumber: 'ABC 1234',
-  },
-  {
-    name: 'Kayden Reyes',
-    studentno: '2026937163',
-    phonenumber: '09775556666',
-    department: 'Admin Office',
-    position: 'Personnel',
-    vehicletype: 'Motorcycle',
-    platenumber: 'XYZ 9999',
-  },
-  {
-    name: 'Duchess Sison',
-    studentno: '2026184726',
-    phonenumber: '09123456789',
-    department: 'Security',
-    position: 'Guard',
-    vehicletype: 'SUV',
-    platenumber: 'WHD 8394',
-  }
-];
-
 const UserList = () => {
+  const [drivers, setDrivers] = useState([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
   const [activeRole, setActiveRole] = useState('Student');
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get('http://localhost:8000/api/drivers')
+      .then(response => setDrivers(response.data))
+      .catch(error => console.error('Error fetching drivers:', error));
+  }, []);
 
   const roleCount = {
     Student: 0,
@@ -55,16 +24,15 @@ const UserList = () => {
     Guard: 0,
   };
 
-  userData.forEach(user => {
-    if (roleCount[user.position] !== undefined) {
-      roleCount[user.position]++;
+  drivers.forEach(driver => {
+    if (roleCount[driver.position] !== undefined) {
+      roleCount[driver.position]++;
     }
   });
 
-  const filteredData = userData.filter(
-    user =>
-      user.position === activeRole &&
-      user.name.toLowerCase().includes(search.toLowerCase())
+  const filteredData = drivers.filter(driver =>
+    driver.position === activeRole &&
+    driver.id.toString().includes(search.toLowerCase()) // assuming id is DriverID
   );
 
   return (
@@ -89,7 +57,7 @@ const UserList = () => {
           <button className="add">Add</button>
           <button
             className="pending"
-            onClick={() => navigate('/pendinglist')} 
+            onClick={() => navigate('/pendinglist')}
           >
             Pending
           </button>
@@ -98,7 +66,7 @@ const UserList = () => {
         <div className="right-actions">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search by Driver ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -112,25 +80,23 @@ const UserList = () => {
       <table className="userlist-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Student No.</th>
-            <th>Phone Number</th>
-            <th>Department</th>
+            <th>Driver ID</th>
+            <th>User ID</th>
+            <th>QR Code ID</th>
             <th>Position</th>
-            <th>Vehicle Type</th>
-            <th>Plate Number</th>
+            <th>Department</th>
+            <th>Driver License</th>
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((user, index) => (
+          {filteredData.map((driver, index) => (
             <tr key={index}>
-              <td>{user.name}</td>
-              <td>{user.studentno}</td>
-              <td>{user.phonenumber}</td>
-              <td>{user.department}</td>
-              <td>{user.position}</td>
-              <td>{user.vehicletype}</td>
-              <td>{user.platenumber}</td>
+              <td>{driver.id}</td>
+              <td>{driver.user_id}</td>
+              <td>{driver.qr_code}</td>
+              <td>{driver.position}</td>
+              <td>{driver.department}</td>
+              <td>{driver.driver_license}</td>
             </tr>
           ))}
         </tbody>

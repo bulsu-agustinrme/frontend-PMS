@@ -71,7 +71,7 @@ const PendingList = () => {
       <div className="pendinglist-actions">
         <div className="role-buttons">
           <button className="add">Add</button>
-          <button className="pending">Pending</button>
+          <button className="userlist">Pending</button>
         </div>
 
         <div className="right-actions">
