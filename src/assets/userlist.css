@@ -1,5 +1,5 @@
 .userlist-container {
-  padding: 40px 60px;
+  padding: 40px 30px; /* reduced horizontal padding */
   background-color: #fff;
   min-height: 100vh;
   width: 100%;
@@ -101,18 +101,35 @@
 
 .userlist-table th,
 .userlist-table td {
-  padding: 16px 24px;
+  padding: 14px 16px; /* adjusted from 16px 24px */
   border-bottom: 1px solid #ddd;
   font-size: 15px;
+  text-align: left;
 }
 
 .userlist-table th {
   background-color: #f0f0f0;
   font-weight: 600;
   color: #333;
-  text-align: left;
 }
 
+/* Optional column widths for better alignment */
+.userlist-table th:nth-child(1),
+.userlist-table td:nth-child(1) {
+  width: 110px;
+}
+
+.userlist-table th:nth-child(2),
+.userlist-table td:nth-child(2) {
+  width: 100px;
+}
+
+.userlist-table th:nth-child(3),
+.userlist-table td:nth-child(3) {
+  width: 120px;
+}
+
+/* Hover Row */
 .userlist-table tr:hover {
   background-color: #f5f5f5;
 }

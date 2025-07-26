@@ -1,5 +1,5 @@
 .pendinglist-container {
-  padding: 40px 60px;
+  padding: 40px;
   background-color: #fff;
   min-height: 100vh;
   width: 100%;
@@ -11,21 +11,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  row-gap: 15px;
+  row-gap: 12px;
 }
 
 .pendinglist-header h2 {
   color: #a73737;
-  font-size: 32px;
+  font-size: 28px;
   margin: 0;
 }
 
 .role-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 }
 
 .role-buttons button {
@@ -33,7 +33,7 @@
   border: 2px solid #cc4444;
   color: #cc4444;
   font-weight: 500;
-  padding: 8px 20px;
+  padding: 6px 18px;
   border-radius: 8px;
   font-size: 14px;
   cursor: pointer;
@@ -47,7 +47,6 @@
   font-weight: bold;
 }
 
-/* Add & Pending Buttons */
 .role-buttons .add {
   background-color: #cc4444;
   border: 2px solid #cc4444;
@@ -67,24 +66,24 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 14px;
 }
 
 .right-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 }
 
 .right-actions input,
 .right-actions select {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
-  min-width: 180px;
+  min-width: 160px;
 }
 
 /* --- Table --- */
@@ -94,14 +93,14 @@
   background-color: #f9f9f9;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .pendinglist-table th,
 .pendinglist-table td {
-  padding: 16px 24px;
+  padding: 14px 20px;
   border-bottom: 1px solid #ddd;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .pendinglist-table th {
@@ -130,7 +129,7 @@
 
 .action-icons {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   justify-content: center;
 }
 
@@ -138,8 +137,8 @@
   border: none;
   background-color: transparent;
   cursor: pointer;
-  font-size: 16px;
-  padding: 5px;
+  font-size: 15px;
+  padding: 4px;
   border-radius: 50%;
 }
 
@@ -150,4 +149,3 @@
 .action-icons .reject {
   color: #dc3545;
 }
-

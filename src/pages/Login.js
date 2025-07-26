@@ -1,29 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'assets/Login.css'; 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { FaEye, FaEyeSlash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import 'assets/Login.css';
 
 function Login() {
   const [values, setValues] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('');
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => setMessage(''), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const handleInput = (e) => {
-    setValues(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setValues((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { email, password } = values;
+
+    if (!email && !password) {
+      setMessage('Please enter your email address and password');
+      setMessageType('error');
+      return;
+    }
+    if (!email) {
+      setMessage('Please enter your email address');
+      setMessageType('error');
+      return;
+    }
+    if (!password) {
+      setMessage('Please enter your password');
+      setMessageType('error');
+      return;
+    }
+
     try {
       const response = await axios.post('http://localhost:8000/api/login', {
-        email: values.email,
-        password: values.password,
+        email,
+        password,
       });
 
-      console.log(response.data);
-      navigate('/dashboard'); 
+      const backendMessage = response.data?.message;
+
+      if (backendMessage === 'Login Successfully') {
+        setMessage('Login Successfully! Redirecting...');
+        setMessageType('success');
+        setTimeout(() => navigate('/dashboard'), 1500);
+      } else {
+        setMessage('Unexpected response. Please try again.');
+        setMessageType('error');
+      }
     } catch (error) {
-      console.error(error.response?.data || error.message);
+      const backendMessage = error.response?.data?.message;
+
+      if (backendMessage === 'No records found') {
+        setMessage('No records found.');
+      } else if (backendMessage === 'Email or Password is incorrect.') {
+        setMessage('Email or Password is incorrect.');
+      } else {
+        setMessage('Something went wrong. Please try again.');
+      }
+
+      setMessageType('error');
     }
   };
 
@@ -45,14 +93,32 @@ function Login() {
                 onChange={handleInput}
                 className="login-input"
               />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={values.password}
-                onChange={handleInput}
-                className="login-input"
-              />
+
+              <div className="password-container">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  placeholder="Password"
+                  value={values.password}
+                  onChange={handleInput}
+                  className="login-input password-input"
+                />
+                <span
+                  className="toggle-password-icon"
+                  onClick={() => setShowPassword(!showPassword)}
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </span>
+              </div>
+
+              {message && (
+                <div className={`login-message ${messageType}`}>
+                  {messageType === 'success' && <FaCheckCircle className="message-icon success-icon" />}
+                  {messageType === 'error' && <FaTimesCircle className="message-icon error-icon" />}
+                  <span>{message}</span>
+                </div>
+              )}
 
               <div className="login-options">
                 <label>

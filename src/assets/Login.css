@@ -178,3 +178,76 @@ body {
   margin: 0 auto 25px auto;
   display: block;
 }
+
+/*show password */
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-input {
+  width: 100%;
+  padding-right: 44px; /* reserve space for icon */
+  height: 48px; /* optional, to ensure consistent vertical centering */
+  box-sizing: border-box;
+}
+
+.toggle-password-icon {
+  position: absolute;
+  top: 0;
+  right: 14px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #888;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/*error message styles */
+.password-container {
+  position: relative;
+}
+
+.toggle-password-icon {
+  position: absolute;
+  top: 35%; /* moved slightly higher */
+  right: 15px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #555;
+  font-size: 1.1rem;
+}
+
+.login-message {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.login-message.success {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.login-message.error {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.message-icon {
+  margin-right: 8px;
+  vertical-align: middle;
+  font-size: 1.2rem;
+}
+
+.success-icon {
+  color: #15803d;
+}
+
+.error-icon {
+  color: #b91c1c;
+}
+

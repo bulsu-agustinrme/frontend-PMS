@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'assets/pendinglist.css';
 import { FaFilePdf, FaCheck, FaTimes } from 'react-icons/fa';
 
@@ -24,6 +25,50 @@ const pendingData = [
     platenumber: 'BBB 2222',
     or: 'or-carlos.pdf',
     cr: 'cr-carlos.pdf'
+  },
+  {
+    name: 'Maria Lopez',
+    studentno: '2026100001',
+    phonenumber: '09171234567',
+    department: 'College of Education',
+    position: 'Student',
+    vehicletype: 'SUV',
+    platenumber: 'CCC 3333',
+    or: 'or-maria.pdf',
+    cr: 'cr-maria.pdf'
+  },
+  {
+    name: 'John Reyes',
+    studentno: '2026123456',
+    phonenumber: '09334445566',
+    department: 'College of Business',
+    position: 'Faculty',
+    vehicletype: 'Truck',
+    platenumber: 'DDD 4444',
+    or: 'or-john.pdf',
+    cr: 'cr-john.pdf'
+  },
+  {
+    name: 'Ella Santos',
+    studentno: '2026099999',
+    phonenumber: '09081112233',
+    department: 'College of Architecture',
+    position: 'Student',
+    vehicletype: 'Van',
+    platenumber: 'EEE 5555',
+    or: 'or-ella.pdf',
+    cr: 'cr-ella.pdf'
+  },
+  {
+    name: 'Ramon De Vera',
+    studentno: '2026130000',
+    phonenumber: '09223334455',
+    department: 'College of Technology',
+    position: 'Personnel',
+    vehicletype: 'Car',
+    platenumber: 'FFF 6666',
+    or: 'or-ramon.pdf',
+    cr: 'cr-ramon.pdf'
   }
 ];
 
@@ -31,6 +76,8 @@ const PendingList = () => {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
   const [activeRole, setActiveRole] = useState('Student');
+
+  const navigate = useNavigate();
 
   const roleCount = {
     Student: 0,
@@ -49,7 +96,14 @@ const PendingList = () => {
     .filter(user =>
       user.position === activeRole &&
       user.name.toLowerCase().includes(search.toLowerCase())
-    );
+    )
+    .sort((a, b) => {
+      if (sort === 'newest') {
+        return b.studentno.localeCompare(a.studentno);
+      } else {
+        return a.studentno.localeCompare(b.studentno);
+      }
+    });
 
   return (
     <div className="pendinglist-container">
@@ -62,7 +116,7 @@ const PendingList = () => {
               className={activeRole === role ? 'active' : ''}
               onClick={() => setActiveRole(role)}
             >
-             {role === 'Faculty' ? 'Faculty' : `${role}s`}: {roleCount[role]}
+              {role === 'Faculty' ? 'Faculty' : `${role}s`}: {roleCount[role]}
             </button>
           ))}
         </div>
@@ -70,8 +124,13 @@ const PendingList = () => {
 
       <div className="pendinglist-actions">
         <div className="role-buttons">
-          <button className="add">Add</button>
-          <button className="userlist">Pending</button>
+          {/* Replaced "Pending" with "User" and added navigation */}
+          <button
+            className="userlist"
+            onClick={() => navigate('/userlist')}
+          >
+            User
+          </button>
         </div>
 
         <div className="right-actions">

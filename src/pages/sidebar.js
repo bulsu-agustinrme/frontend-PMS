@@ -65,14 +65,15 @@ const Sidebar = () => {
       </div>
 
       {/* Logout Button */}
-      <div className="sidebar-logout">
-        <Link to="/admin/sign-in">
-          <button className="logout-button">
-            <FaSignOutAlt style={{ marginRight: '8px' }} />
-            LOGOUT
-          </button>
-        </Link>
-      </div>
+              <ul className="sidebar-menu">
+          {/* Logout item styled like the rest */}
+          <li>
+              <Link to="/admin/sign-in">
+                <FaSignOutAlt className="sidebar-icon" />
+                <strong>LOGOUT</strong>
+              </Link>
+            </li>
+        </ul>
     </div>
   );
 };
