@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import 'assets/forgotpassword.css';
 
 function ForgotPassword() {
@@ -7,17 +8,58 @@ function ForgotPassword() {
   const [codeSent, setCodeSent] = useState(false);
   const [code, setCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState(''); // success or error
 
-  const handleSendCode = (e) => {
+  const handleSendCode = async (e) => {
     e.preventDefault();
-    // Normally, you'd call backend API here
-    setCodeSent(true);
+
+    try {
+      const response = await axios.post('http://localhost:8000/api/forgot-password', {
+        email,
+      });
+
+      setCodeSent(true);
+      setMessage('✅ Code sent to your email. Use it to reset your password.');
+      setMessageType('success');
+
+      // Log the code for now (until email is implemented)
+      console.log('Reset Code:', response.data.code);
+    } catch (error) {
+      const backendMsg = error.response?.data?.message || 'Failed to send reset code.';
+      setMessage(`❌ ${backendMsg}`);
+      setMessageType('error');
+    }
   };
 
-  const handleResetPassword = (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
-    console.log('Resetting password for:', email, 'with code:', code, 'and new password:', newPassword);
-    // Backend reset logic here
+
+    if (newPassword !== confirmPassword) {
+      setMessage('❌ Passwords do not match.');
+      setMessageType('error');
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:8000/api/reset-password', {
+        email,
+        token: code,
+        password: newPassword,
+        password_confirmation: confirmPassword,
+      });
+
+      setMessage('✅ Password reset successful! You may now log in.');
+      setMessageType('success');
+      setTimeout(() => {
+        window.location.href = '/admin/sign-in'; // or use navigate if using useNavigate()
+      }, 2000);
+    } catch (error) {
+      const backendMsg = error.response?.data?.message || 'Failed to reset password.';
+      setMessage(`❌ ${backendMsg}`);
+      setMessageType('error');
+    }
   };
 
   return (
@@ -31,7 +73,9 @@ function ForgotPassword() {
               className="forgot-logo"
             />
             <h2 className="forgot-title">Forgot Password</h2>
-            <p className="forgot-subtitle">Enter your email to receive a code</p>
+            <p className="forgot-subtitle">
+              {codeSent ? 'Enter the code sent to your email and reset your password.' : 'Enter your email to receive a code.'}
+            </p>
 
             <form onSubmit={codeSent ? handleResetPassword : handleSendCode}>
               <input
@@ -41,6 +85,7 @@ function ForgotPassword() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={codeSent}
               />
 
               {codeSent && (
@@ -61,15 +106,32 @@ function ForgotPassword() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
                   />
+                  <input
+                    type="password"
+                    placeholder="Confirm new password"
+                    className="forgot-input"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
                 </>
               )}
 
-              <button type="submit" className={codeSent ? 'forgot-button' : 'send-code-button'}>
+              {message && (
+                <div className={`forgot-message ${messageType}`}>
+                  {message}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className={codeSent ? 'forgot-button' : 'send-code-button'}
+              >
                 {codeSent ? 'Reset Password' : 'Send Code'}
               </button>
 
               <div className="back-link">
-                <Link to="/admin/sign-in">Back to Login</Link>
+                <Link to="/admin/sign-in">← Back to Login</Link>
               </div>
             </form>
           </div>
