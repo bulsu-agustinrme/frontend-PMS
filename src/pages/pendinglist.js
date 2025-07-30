@@ -1,83 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'assets/pendinglist.css';
-import { FaFilePdf, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaUserGraduate, FaChalkboardTeacher, FaUserTie, FaShieldAlt } from 'react-icons/fa';
+import 'assets/userlist.css';
 
-const pendingData = [
-  {
-    name: 'Angela Cruz',
-    studentno: '2026100999',
-    phonenumber: '09112223344',
-    department: 'College of Engineering',
-    position: 'Student',
-    vehicletype: 'Sedan',
-    platenumber: 'AAA 1111',
-    or: 'or-angela.pdf',
-    cr: 'cr-angela.pdf'
-  },
-  {
-    name: 'Carlos Dizon',
-    studentno: '2026111000',
-    phonenumber: '09998887711',
-    department: 'College of Arts',
-    position: 'Faculty',
-    vehicletype: 'Motorcycle',
-    platenumber: 'BBB 2222',
-    or: 'or-carlos.pdf',
-    cr: 'cr-carlos.pdf'
-  },
-  {
-    name: 'Maria Lopez',
-    studentno: '2026100001',
-    phonenumber: '09171234567',
-    department: 'College of Education',
-    position: 'Student',
-    vehicletype: 'SUV',
-    platenumber: 'CCC 3333',
-    or: 'or-maria.pdf',
-    cr: 'cr-maria.pdf'
-  },
-  {
-    name: 'John Reyes',
-    studentno: '2026123456',
-    phonenumber: '09334445566',
-    department: 'College of Business',
-    position: 'Faculty',
-    vehicletype: 'Truck',
-    platenumber: 'DDD 4444',
-    or: 'or-john.pdf',
-    cr: 'cr-john.pdf'
-  },
-  {
-    name: 'Ella Santos',
-    studentno: '2026099999',
-    phonenumber: '09081112233',
-    department: 'College of Architecture',
-    position: 'Student',
-    vehicletype: 'Van',
-    platenumber: 'EEE 5555',
-    or: 'or-ella.pdf',
-    cr: 'cr-ella.pdf'
-  },
-  {
-    name: 'Ramon De Vera',
-    studentno: '2026130000',
-    phonenumber: '09223334455',
-    department: 'College of Technology',
-    position: 'Personnel',
-    vehicletype: 'Car',
-    platenumber: 'FFF 6666',
-    or: 'or-ramon.pdf',
-    cr: 'cr-ramon.pdf'
-  }
-];
+const roleIcons = {
+  Student: <FaUserGraduate style={{ color: 'black', marginRight: '6px' }} />,
+  Faculty: <FaChalkboardTeacher style={{ color: 'black', marginRight: '6px' }} />,
+  Personnel: <FaUserTie style={{ color: 'black', marginRight: '6px' }} />,
+  Guard: <FaShieldAlt style={{ color: 'black', marginRight: '6px' }} />,
+};
 
-const PendingList = () => {
+const UserList = () => {
+  const [drivers, setDrivers] = useState([]); // no sample data
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
   const [activeRole, setActiveRole] = useState('Student');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setDrivers([]); 
+  }, []);
 
   const roleCount = {
     Student: 0,
@@ -86,112 +29,68 @@ const PendingList = () => {
     Guard: 0,
   };
 
-  pendingData.forEach(user => {
-    if (roleCount[user.position] !== undefined) {
-      roleCount[user.position]++;
-    }
-  });
-
-  const filteredData = pendingData
-    .filter(user =>
-      user.position === activeRole &&
-      user.name.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (sort === 'newest') {
-        return b.studentno.localeCompare(a.studentno);
-      } else {
-        return a.studentno.localeCompare(b.studentno);
-      }
-    });
-
   return (
-    <div className="pendinglist-container">
-      <div className="pendinglist-header">
+    <div className="userlist-container">
+      <div className="userlist-header">
         <h2>Pending List</h2>
         <div className="role-buttons">
-          {Object.keys(roleCount).map((role) => (
+          {['Student', 'Faculty', 'Personnel', 'Guard'].map(role => (
             <button
               key={role}
               className={activeRole === role ? 'active' : ''}
               onClick={() => setActiveRole(role)}
             >
-              {role === 'Faculty' ? 'Faculty' : `${role}s`}: {roleCount[role]}
+              {roleIcons[role]} {role === 'Faculty' ? role : `${role}s`}: {roleCount[role]}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="pendinglist-actions">
-        <div className="role-buttons">
-          {/* Replaced "Pending" with "User" and added navigation */}
-          <button
-            className="userlist"
-            onClick={() => navigate('/userlist')}
-          >
+      <div className="userlist-actions">
+        <div className="left-actions">
+          <button className="pending-btn" onClick={() => navigate('/userlist')}>
             User
           </button>
         </div>
 
         <div className="right-actions">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search by Driver ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <select
+            className="sort-select"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
             <option value="newest">Newest to Oldest</option>
             <option value="oldest">Oldest to Newest</option>
           </select>
         </div>
       </div>
 
-      <table className="pendinglist-table">
+      <table className="userlist-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Student No.</th>
-            <th>Phone Number</th>
-            <th>Department</th>
+            <th>Driver ID</th>
+            <th>User ID</th>
+            <th>QR Code ID</th>
             <th>Position</th>
-            <th>Vehicle Type</th>
-            <th>Plate Number</th>
-            <th>OR</th>
-            <th>CR</th>
-            <th>Action</th>
+            <th>Department</th>
+            <th>Driver License</th>
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((user, index) => (
-            <tr key={index}>
-              <td>{user.name}</td>
-              <td>{user.studentno}</td>
-              <td>{user.phonenumber}</td>
-              <td>{user.department}</td>
-              <td>{user.position}</td>
-              <td>{user.vehicletype}</td>
-              <td>{user.platenumber}</td>
-              <td>
-                <a href={`/${user.or}`} className="pdf-link" target="_blank" rel="noopener noreferrer">
-                  <FaFilePdf /> OR
-                </a>
-              </td>
-              <td>
-                <a href={`/${user.cr}`} className="pdf-link" target="_blank" rel="noopener noreferrer">
-                  <FaFilePdf /> CR
-                </a>
-              </td>
-              <td className="action-icons">
-                <button className="approve"><FaCheck /></button>
-                <button className="reject"><FaTimes /></button>
-              </td>
-            </tr>
-          ))}
+          {/* Table body left empty intentionally */}
         </tbody>
       </table>
     </div>
   );
 };
 
-export default PendingList;
+export default UserList;

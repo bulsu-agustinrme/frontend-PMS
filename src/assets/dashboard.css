@@ -22,9 +22,9 @@
 }
 
 .card {
-  background-color:#cc4444 !important; 
+  background-color: #cc4444 !important; 
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 1000px; /* <-- increased from 12px to 20px */
   text-align: center;
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.3s ease;

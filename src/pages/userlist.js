@@ -1,58 +1,16 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios'; // Commented for local test only
 import { useNavigate } from 'react-router-dom';
+import { FaUserGraduate, FaChalkboardTeacher, FaUserTie, FaShieldAlt } from 'react-icons/fa';
 import 'assets/userlist.css';
 
-const sampleDrivers = [
-  {
-    id: 1001,
-    user_id: 'U001',
-    qr_code: 'QR1001',
-    position: 'Student',
-    department: 'College of Engineering',
-    driver_license: 'DL1001'
-  },
-  {
-    id: 1005,
-    user_id: 'U005',
-    qr_code: 'QR1005',
-    position: 'Faculty',
-    department: 'College of Arts',
-    driver_license: 'DL1005'
-  },
-  {
-    id: 1003,
-    user_id: 'U003',
-    qr_code: 'QR1003',
-    position: 'Student',
-    department: 'College of Nursing',
-    driver_license: 'DL1003'
-  },
-  {
-    id: 1002,
-    user_id: 'U002',
-    qr_code: 'QR1002',
-    position: 'Personnel',
-    department: 'College of Business',
-    driver_license: 'DL1002'
-  },
-  {
-    id: 1004,
-    user_id: 'U004',
-    qr_code: 'QR1004',
-    position: 'Guard',
-    department: 'Security Office',
-    driver_license: 'DL1004'
-  },
-  {
-    id: 1006,
-    user_id: 'U006',
-    qr_code: 'QR1006',
-    position: 'Student',
-    department: 'College of Technology',
-    driver_license: 'DL1006'
-  }
-];
+const sampleDrivers = [];
+
+const roleIcons = {
+  Student: <FaUserGraduate style={{ color: 'black', marginRight: '6px' }} />,
+  Faculty: <FaChalkboardTeacher style={{ color: 'black', marginRight: '6px' }} />,
+  Personnel: <FaUserTie style={{ color: 'black', marginRight: '6px' }} />,
+  Guard: <FaShieldAlt style={{ color: 'black', marginRight: '6px' }} />,
+};
 
 const UserList = () => {
   const [drivers, setDrivers] = useState([]);
@@ -62,12 +20,8 @@ const UserList = () => {
 
   const navigate = useNavigate();
 
-  // --- MOCK FETCH DATA FOR TESTING ---
   useEffect(() => {
-    // axios.get('http://localhost:8000/api/drivers')
-    //   .then(response => setDrivers(response.data))
-    //   .catch(error => console.error('Error fetching drivers:', error));
-    setDrivers(sampleDrivers); // Use mock data instead of API
+    setDrivers(sampleDrivers); // loads empty array
   }, []);
 
   const roleCount = {
@@ -104,31 +58,34 @@ const UserList = () => {
               className={activeRole === role ? 'active' : ''}
               onClick={() => setActiveRole(role)}
             >
-              {role === 'Faculty' ? 'Faculty' : `${role}s`}: {roleCount[role]}
+              {roleIcons[role]} {role === 'Faculty' ? role : `${role}s`}: {roleCount[role]}
             </button>
           ))}
         </div>
       </div>
 
       <div className="userlist-actions">
-        <div className="role-buttons">
-          {/* Removed Add button */}
-          <button
-            className="pending"
-            onClick={() => navigate('/pendinglist')}
-          >
+        <div className="left-actions">
+          <button className="pending-btn" onClick={() => navigate('/pendinglist')}>
             Pending
           </button>
         </div>
 
         <div className="right-actions">
-          <input
-            type="text"
-            placeholder="Search by Driver ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search by Driver ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <select
+            className="sort-select"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
             <option value="newest">Newest to Oldest</option>
             <option value="oldest">Oldest to Newest</option>
           </select>
@@ -147,16 +104,23 @@ const UserList = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((driver, index) => (
-            <tr key={index}>
-              <td>{driver.id}</td>
-              <td>{driver.user_id}</td>
-              <td>{driver.qr_code}</td>
-              <td>{driver.position}</td>
-              <td>{driver.department}</td>
-              <td>{driver.driver_license}</td>
+          {filteredData.length === 0 ? (
+            <tr>
+              <td colSpan="6" style={{ textAlign: 'center', padding: '20px', color: '#777' }}>
+              </td>
             </tr>
-          ))}
+          ) : (
+            filteredData.map((driver, index) => (
+              <tr key={index}>
+                <td>{driver.id}</td>
+                <td>{driver.user_id}</td>
+                <td>{driver.qr_code}</td>
+                <td>{driver.position}</td>
+                <td>{driver.department}</td>
+                <td>{driver.driver_license}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>
