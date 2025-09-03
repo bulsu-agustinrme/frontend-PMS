@@ -15,10 +15,9 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h2>Welcome back, Admin Joseph!</h2>
-      <div className="dashboard-cards">
-
-        <div className="card" onClick={() => navigate('/parkingspaces')}>
+      <h2 className="dashboard-title">Welcome back, <strong>Admin Joseph!</strong></h2>
+      <div className="dashboard-grid">
+        <div className="card card-tall" onClick={() => navigate('/parkingspaces')}>
           <FaParking className="card-icon" />
           <h3>Parking Spaces</h3>
         </div>
@@ -33,21 +32,20 @@ const Dashboard = () => {
           <h3>Pending List</h3>
         </div>
 
-        <div className="card" onClick={() => navigate('/messages')}>
-          <FaEnvelope className="card-icon" />
-          <h3>Messages</h3>
-        </div>
-
-        <div className="card" onClick={() => navigate('/settings')}>
-          <FaCog className="card-icon" />
-          <h3>Settings</h3>
-        </div>
-
         <div className="card" onClick={() => navigate('/notifications')}>
           <FaBell className="card-icon" />
           <h3>Notifications</h3>
         </div>
 
+        <div className="card" onClick={() => navigate('/messages')}>
+          <FaEnvelope className="card-icon" />
+          <h3>Messages</h3>
+        </div>
+
+        <div className="card card-wide" onClick={() => navigate('/settings')}>
+          <FaCog className="card-icon" />
+          <h3>Settings</h3>
+        </div>
       </div>
     </div>
   );

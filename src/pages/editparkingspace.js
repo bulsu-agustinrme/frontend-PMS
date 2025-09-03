@@ -1,11 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // import navigation hook
 import 'assets/editparkingspace.css';
 
 const EditParking = () => {
+  const navigate = useNavigate(); // initialize navigation
+
+  const handleEditClick = () => {
+    navigate('/customizedparking'); // navigate to the customized parking page
+  };
+
   return (
     <div className="edit-container">
       <h2 className="hall-title">Pimentel Hall</h2>
-      <button className="edit-btn">Edit Parking</button>
+      <button className="edit-btn" onClick={handleEditClick}>Edit Parking</button>
 
       <div className="parking-layout">
         <div className="zone-label">A</div>
@@ -66,7 +73,6 @@ const EditParking = () => {
                 <span className="action-icons">✏️ 🗑️</span>
               </td>
             </tr>
-            {/* Add more rows as needed */}
           </tbody>
         </table>
       </div>

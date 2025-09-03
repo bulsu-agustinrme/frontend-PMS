@@ -53,7 +53,11 @@ function Login() {
       const backendMessage = response.data?.message;
 
       if (backendMessage === 'Login Successfully') {
+<<<<<<< HEAD
         setMessage('Login Successfully!');
+=======
+        setMessage('Login Successfully! Redirecting...');
+>>>>>>> c5f2d3029efec958613ad94e2350127d3ee85e53
         setMessageType('success');
         setTimeout(() => navigate('/dashboard'), 1500);
       } else {

@@ -12,6 +12,15 @@ const roleIcons = {
   Guard: <FaShieldAlt style={{ color: 'black', marginRight: '6px' }} />,
 };
 
+const sampleDrivers = [];
+
+const roleIcons = {
+  Student: <FaUserGraduate style={{ color: 'black', marginRight: '6px' }} />,
+  Faculty: <FaChalkboardTeacher style={{ color: 'black', marginRight: '6px' }} />,
+  Personnel: <FaUserTie style={{ color: 'black', marginRight: '6px' }} />,
+  Guard: <FaShieldAlt style={{ color: 'black', marginRight: '6px' }} />,
+};
+
 const UserList = () => {
   const [drivers, setDrivers] = useState([]);
   const [search, setSearch] = useState('');
@@ -21,9 +30,7 @@ const UserList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/drivers')
-      .then(response => setDrivers(response.data))
-      .catch(error => console.error('Error fetching drivers:', error));
+    setDrivers(sampleDrivers); // loads empty array
   }, []);
 
   const roleCount = {

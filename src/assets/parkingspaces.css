@@ -20,7 +20,7 @@
   padding: 10px 15px;
   width: 300px;
   border-radius: 8px;
-  border: 1px solid #cc4444;
+  border: 1px solid #ccc;
   font-size: 14px;
   outline: none;
 }
@@ -91,7 +91,7 @@
 
 .add-parking-btn {
   background-color: white;
-  border: 2px solid #cc4444;
+  border: 2px solid #ccc;
   color: #cc4444;
   font-weight: 600;
   font-size: 14px;
