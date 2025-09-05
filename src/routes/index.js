@@ -16,7 +16,7 @@ const MainRoutes = () =>{
     return(
         <Router>
             <Routes>
-            <Route path="/admin/sign-in" element={<Login />}/>
+            <Route path="/sign-in" element={<Login />}/>
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/" element={<Home />}>
             <Route path="/dashboard" element={<Dashboard />}/>

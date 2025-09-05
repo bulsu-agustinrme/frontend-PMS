@@ -8,7 +8,7 @@ import {
   FaCog,
   FaSignOutAlt,
 } from 'react-icons/fa';
-import 'assets/sidebar.css';
+import 'assets/Sidebar.css';
 
 const Sidebar = () => {
   const location = useLocation();

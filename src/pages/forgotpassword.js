@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import 'assets/forgotpassword.css';
+import 'assets/ForgotPassword.css';
 
 function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -147,7 +147,7 @@ function ForgotPassword() {
               </button>
 
               <div className="back-link">
-                <Link to="/admin/sign-in">← Back to Login</Link>
+                <Link to="/sign-in">← Back to Login</Link>
               </div>
             </form>
           </div>

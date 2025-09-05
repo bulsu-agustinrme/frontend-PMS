@@ -8,7 +8,7 @@ import {
   FaCog,
   FaBell,
 } from 'react-icons/fa';
-import 'assets/dashboard.css';
+import 'assets/Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();

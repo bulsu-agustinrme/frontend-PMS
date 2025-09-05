@@ -1,5 +1,5 @@
 import React from 'react';
-import 'assets/notifications.css';
+import 'assets/Notifications.css';
 
 const dummyNotifications = [
   { id: 1, message: 'Vehicle with plate ZXC 1234 entered the parking area.', time: '2 mins ago', date: 'July 24, 2025' },

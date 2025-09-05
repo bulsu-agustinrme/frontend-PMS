@@ -1,5 +1,5 @@
 import React from 'react';
-import 'assets/customizedparking.css';
+import 'assets/CustomizedParking.css';
 
 const CustomizedParking = () => {
   return (

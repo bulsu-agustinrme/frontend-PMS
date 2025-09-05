@@ -1,12 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // import navigation hook
-import 'assets/editparkingspace.css';
+import 'assets/EditParkingSpace.css';
 
 const EditParking = () => {
   const navigate = useNavigate(); // initialize navigation
 
   const handleEditClick = () => {
-    navigate('/customizedparking'); // navigate to the customized parking page
+    navigate('/customized-parking'); // navigate to the customized parking page
   };
 
   return (

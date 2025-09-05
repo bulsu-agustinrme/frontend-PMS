@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import 'assets/settings.css';
+import 'assets/Settings.css';
 
 const Settings = () => {
   const [darkMode, setDarkMode] = useState(false);

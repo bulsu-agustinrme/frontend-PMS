@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../assets/messages.css';
+import '../assets/Messages.css';
 
 function Messages() {
   const [activeTab, setActiveTab] = useState('notification');

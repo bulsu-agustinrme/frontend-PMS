@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'assets/parkingspaces.css';
+import 'assets/ParkingSpaces.css';
 
 const parkingData = [
   { name: "Pimentel Hall", current: 20, total: 20 },
