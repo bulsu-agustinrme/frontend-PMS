@@ -24,7 +24,7 @@ function ForgotPassword() {
       setMessage('✅ Code sent to your email. Use it to reset your password.');
       setMessageType('success');
 
-      // Log the code for now (until email is implemented)
+      // Log the numeric code (backend must send numbers only)
       console.log('Reset Code:', response.data.code);
     } catch (error) {
       const backendMsg = error.response?.data?.message || 'Failed to send reset code.';
@@ -42,18 +42,32 @@ function ForgotPassword() {
       return;
     }
 
+    // Prevent numeric-only code mismatch
+    if (!/^\d+$/.test(code)) {
+      setMessage('❌ Code must be numbers only.');
+      setMessageType('error');
+      return;
+    }
+
     try {
-      await axios.post('http://localhost:8000/api/reset-password', {
+      const response = await axios.post('http://localhost:8000/api/reset-password', {
         email,
         token: code,
         password: newPassword,
         password_confirmation: confirmPassword,
       });
 
+      // Backend should validate if new password == old password
+      if (response.data.error) {
+        setMessage(`❌ ${response.data.error}`);
+        setMessageType('error');
+        return;
+      }
+
       setMessage('✅ Password reset successful! You may now log in.');
       setMessageType('success');
       setTimeout(() => {
-        window.location.href = '/admin/sign-in'; // or use navigate if using useNavigate()
+        window.location.href = '/admin/sign-in';
       }, 2000);
     } catch (error) {
       const backendMsg = error.response?.data?.message || 'Failed to reset password.';
@@ -74,7 +88,9 @@ function ForgotPassword() {
             />
             <h2 className="forgot-title">Forgot Password</h2>
             <p className="forgot-subtitle">
-              {codeSent ? 'Enter the code sent to your email and reset your password.' : 'Enter your email to receive a code.'}
+              {codeSent
+                ? 'Enter the code sent to your email and reset your password.'
+                : 'Enter your email to receive a code.'}
             </p>
 
             <form onSubmit={codeSent ? handleResetPassword : handleSendCode}>
