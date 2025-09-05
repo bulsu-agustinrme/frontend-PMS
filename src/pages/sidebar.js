@@ -19,7 +19,7 @@ const Sidebar = () => {
         {/* Logo */}
         <Link to="/dashboard" className="sidebar-logo">
           <img
-            src={require('assets/logo.png')}
+            src={require('assets/images/logo.png')}
             alt="Logo"
             className="logo-image"
           />

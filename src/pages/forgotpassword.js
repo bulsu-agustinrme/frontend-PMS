@@ -68,7 +68,7 @@ function ForgotPassword() {
         <div className="forgot-left">
           <div className="forgot-form-container">
             <img
-              src={require('assets/logo.png')}
+              src={require('assets/images/logo.png')}
               alt="BulSU Logo"
               className="forgot-logo"
             />

@@ -80,7 +80,7 @@ function Login() {
       <div className="login-container">
         <div className="login-left">
           <div className="login-form-container">
-            <img src={require('assets/logo.png')} alt="Logo" className="login-logo" />
+            <img src={require('assets/images/logo.png')} alt="Logo" className="login-logo" />
             <h2 className="login-title">Welcome back!</h2>
             <p className="login-subtitle">Enter your credentials to access your account</p>
 
