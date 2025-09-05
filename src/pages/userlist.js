@@ -69,7 +69,7 @@ const UserList = () => {
 
       <div className="userlist-actions">
         <div className="left-actions">
-          <button className="pending-btn" onClick={() => navigate('/pendinglist')}>
+          <button className="pending-btn" onClick={() => navigate('/pending-list')}>
             Pending
           </button>
         </div>

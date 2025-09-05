@@ -38,13 +38,13 @@ const Sidebar = () => {
             </Link>
           </li>
           <li className={location.pathname === '/parkingspaces' ? 'active' : ''}>
-            <Link to="/parkingspaces">
+            <Link to="/parking-spaces">
               <FaCar className="sidebar-icon" />
               PARKING SPACES
             </Link>
           </li>
           <li className={location.pathname === '/userlist' ? 'active' : ''}>
-            <Link to="/userlist">
+            <Link to="/user-list">
               <FaUsers className="sidebar-icon" />
               USER LIST
             </Link>

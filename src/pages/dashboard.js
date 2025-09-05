@@ -17,17 +17,17 @@ const Dashboard = () => {
     <div className="dashboard">
       <h2 className="dashboard-title">Welcome back, <strong>Admin Joseph!</strong></h2>
       <div className="dashboard-grid">
-        <div className="card card-tall" onClick={() => navigate('/parkingspaces')}>
+        <div className="card card-tall" onClick={() => navigate('/parking-spaces')}>
           <FaParking className="card-icon" />
           <h3>Parking Spaces</h3>
         </div>
 
-        <div className="card" onClick={() => navigate('/userlist')}>
+        <div className="card" onClick={() => navigate('/user-list')}>
           <FaUsers className="card-icon" />
           <h3>User List</h3>
         </div>
 
-        <div className="card" onClick={() => navigate('/pendinglist')}>
+        <div className="card" onClick={() => navigate('/pending-list')}>
           <FaClock className="card-icon" />
           <h3>Pending List</h3>
         </div>

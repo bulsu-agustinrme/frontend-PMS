@@ -46,7 +46,7 @@ const Parkingspaces = () => {
       </div>
 
       <div className="add-parking-button-container">
-        <button className="add-parking-btn" onClick={() => navigate('/editparkingspace')}>
+        <button className="add-parking-btn" onClick={() => navigate('/edit-parking-space')}>
           Add Parking Space
         </button>
       </div>

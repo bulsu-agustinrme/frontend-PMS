@@ -1,7 +1,7 @@
 import React from 'react';
 import {Outlet} from 'react-router-dom';
 import 'assets/home.css'; 
-import Sidebar from './sidebar';
+import Sidebar from './Sidebar';
 
 function Home() {
   return (
