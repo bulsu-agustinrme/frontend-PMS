@@ -14,12 +14,6 @@ const roleIcons = {
 
 const sampleDrivers = [];
 
-const roleIcons = {
-  Student: <FaUserGraduate style={{ color: 'black', marginRight: '6px' }} />,
-  Faculty: <FaChalkboardTeacher style={{ color: 'black', marginRight: '6px' }} />,
-  Personnel: <FaUserTie style={{ color: 'black', marginRight: '6px' }} />,
-  Guard: <FaShieldAlt style={{ color: 'black', marginRight: '6px' }} />,
-};
 
 const UserList = () => {
   const [drivers, setDrivers] = useState([]);
