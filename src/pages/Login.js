@@ -1,17 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { FaEye, FaEyeSlash, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import FormInput from 'components/FormInput';
+import PasswordInput from 'components/PasswordInput';
+import MessageAlert from 'components/MessageAlert';
 import 'assets/Login.css';
 
 function Login() {
   const [values, setValues] = useState({ email: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
   const navigate = useNavigate();
 
+  // ✅ Auto-redirect if already logged in
+  useEffect(() => {
+    const token = localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+    if (token) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
+
+  // ✅ Clear alerts after 4s
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => setMessage(''), 4000);
@@ -25,7 +35,6 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { email, password } = values;
 
     if (!email && !password) {
@@ -45,14 +54,26 @@ function Login() {
     }
 
     try {
-      const response = await axios.post('http://localhost:8000/api/login', {
-        email,
+      const response = await axios.post('http://localhost:8000/api/login', { 
+        email, 
         password,
+        remember: rememberMe 
       });
 
       const backendMessage = response.data?.message;
+      const token = response.data?.data?.token; // ✅ fixed: nested in "data"
+      const userName = response.data?.data?.name;
 
-      if (backendMessage === 'Login Successfully') {
+      if (backendMessage === 'Login Successfully' && token) {
+        // ✅ Save token depending on Remember Me
+        if (rememberMe) {
+          localStorage.setItem("authToken", token);
+          localStorage.setItem("userName", userName);
+        } else {
+          sessionStorage.setItem("authToken", token);
+          sessionStorage.setItem("userName", userName);
+        }
+
         setMessage('Login Successfully!');
         setMessageType('success');
         setTimeout(() => navigate('/dashboard'), 1500);
@@ -62,15 +83,13 @@ function Login() {
       }
     } catch (error) {
       const backendMessage = error.response?.data?.message;
-
-      if (backendMessage === 'No records found') {
-        setMessage('No records found.');
-      } else if (backendMessage === 'Email or Password is incorrect.') {
-        setMessage('Email or Password is incorrect.');
-      } else {
-        setMessage('Something went wrong. Please try again.');
-      }
-
+      setMessage(
+        backendMessage === 'No records found'
+          ? 'No records found.'
+          : backendMessage === 'Email or Password is incorrect.'
+          ? 'Email or Password is incorrect.'
+          : 'Something went wrong. Please try again.'
+      );
       setMessageType('error');
     }
   };
@@ -85,7 +104,7 @@ function Login() {
             <p className="login-subtitle">Enter your credentials to access your account</p>
 
             <form onSubmit={handleSubmit}>
-              <input
+              <FormInput
                 type="email"
                 name="email"
                 placeholder="Email address"
@@ -94,35 +113,22 @@ function Login() {
                 className="login-input"
               />
 
-              <div className="password-container">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  placeholder="Password"
-                  value={values.password}
-                  onChange={handleInput}
-                  className="login-input password-input"
-                />
-                <span
-                  className="toggle-password-icon"
-                  onClick={() => setShowPassword(!showPassword)}
-                  title={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </span>
-              </div>
+              <PasswordInput
+                name="password"
+                value={values.password}
+                onChange={handleInput}
+                className="login-input"
+              />
 
-              {message && (
-                <div className={`login-message ${messageType}`}>
-                  {messageType === 'success' && <FaCheckCircle className="message-icon success-icon" />}
-                  {messageType === 'error' && <FaTimesCircle className="message-icon error-icon" />}
-                  <span>{message}</span>
-                </div>
-              )}
+              <MessageAlert message={message} type={messageType} />
 
               <div className="login-options">
                 <label>
-                  <input type="checkbox" /> Remember me
+                  <input 
+                    type="checkbox" 
+                    checked={rememberMe} 
+                    onChange={(e) => setRememberMe(e.target.checked)} 
+                  /> Remember me
                 </label>
               </div>
 

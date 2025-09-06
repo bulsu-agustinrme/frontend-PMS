@@ -54,7 +54,7 @@
 .logo-line2 {
   font-size: 14px;
   font-weight: bold;
-  opacity: 10;
+  opacity: 0.8;
 }
 
 .sidebar-menu {
@@ -64,27 +64,38 @@
 }
 
 .sidebar-menu li {
-  padding: 15px 10px;
   margin-bottom: 10px;
+}
+
+/* For links and buttons in sidebar */
+.sidebar-menu li a,
+.sidebar-menu li button {
+  width: 100%;
+  padding: 15px 10px;
   cursor: pointer;
   font-size: 14px;
   border-radius: 5px;
-  transition: 0.3s;
-}
-
-.sidebar-menu li a {
-  color: white;
-  text-decoration: none;
   display: flex;
   align-items: center;
   gap: 10px;
+  border: none;
+  background: transparent;
+  color: white;
+  transition: background-color 0.3s ease;
+  text-align: left;
 }
 
 .sidebar-icon {
   margin-right: 5px;
 }
 
-.sidebar-menu li:hover,
-.sidebar-menu li.active {
+.sidebar-menu li a:hover,
+.sidebar-menu li button:hover,
+.sidebar-menu li.active a {
   background-color: #a73737;
+}
+
+/* Logout button specific */
+.logout-btn {
+  font-weight: bold;
 }

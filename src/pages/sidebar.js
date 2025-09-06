@@ -1,5 +1,6 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   FaTachometerAlt,
   FaCar,
@@ -7,19 +8,48 @@ import {
   FaEnvelope,
   FaCog,
   FaSignOutAlt,
-} from 'react-icons/fa';
-import 'assets/Sidebar.css';
+} from "react-icons/fa";
+import "assets/Sidebar.css";
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const token =
+        localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+
+      if (token) {
+        await axios.post(
+          "http://localhost:8000/api/logout",
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      // ✅ Always clear tokens on frontend
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userName");
+      sessionStorage.removeItem("authToken");
+      sessionStorage.removeItem("userName");
+
+      // ✅ Redirect to sign-in
+      navigate("/sign-in");
+    }
+  };
 
   return (
     <div className="sidebar">
       <div>
         {/* Logo */}
-        <Link to="/dashboard" className="sidebar-logo">
+        <a href="/dashboard" className="sidebar-logo">
           <img
-            src={require('assets/images/logo.png')}
+            src={require("assets/images/logo.png")}
             alt="Logo"
             className="logo-image"
           />
@@ -27,53 +57,54 @@ const Sidebar = () => {
             <div className="logo-line1">PARKING MANAGEMENT</div>
             <div className="logo-line2">SYSTEM</div>
           </div>
-        </Link>
+        </a>
 
         {/* Menu */}
         <ul className="sidebar-menu">
-          <li className={location.pathname === '/dashboard' ? 'active' : ''}>
-            <Link to="/dashboard">
+          <li className={location.pathname === "/dashboard" ? "active" : ""}>
+            <a href="/dashboard">
               <FaTachometerAlt className="sidebar-icon" />
               DASHBOARD
-            </Link>
+            </a>
           </li>
-          <li className={location.pathname === '/parkingspaces' ? 'active' : ''}>
-            <Link to="/parking-spaces">
+          <li
+            className={location.pathname === "/parking-spaces" ? "active" : ""}
+          >
+            <a href="/parking-spaces">
               <FaCar className="sidebar-icon" />
               PARKING SPACES
-            </Link>
+            </a>
           </li>
-          <li className={location.pathname === '/userlist' ? 'active' : ''}>
-            <Link to="/user-list">
+          <li className={location.pathname === "/user-list" ? "active" : ""}>
+            <a href="/user-list">
               <FaUsers className="sidebar-icon" />
               USER LIST
-            </Link>
+            </a>
           </li>
-          <li className={location.pathname === '/messages' ? 'active' : ''}>
-            <Link to="/messages">
+          <li className={location.pathname === "/messages" ? "active" : ""}>
+            <a href="/messages">
               <FaEnvelope className="sidebar-icon" />
               MESSAGES
-            </Link>
+            </a>
           </li>
-          <li className={location.pathname === '/settings' ? 'active' : ''}>
-            <Link to="/settings">
+          <li className={location.pathname === "/settings" ? "active" : ""}>
+            <a href="/settings">
               <FaCog className="sidebar-icon" />
               SETTINGS
-            </Link>
+            </a>
           </li>
         </ul>
       </div>
 
       {/* Logout Button */}
-              <ul className="sidebar-menu">
-          {/* Logout item styled like the rest */}
-          <li>
-              <Link to="/admin/sign-in">
-                <FaSignOutAlt className="sidebar-icon" />
-                <strong>LOGOUT</strong>
-              </Link>
-            </li>
-        </ul>
+      <ul className="sidebar-menu">
+        <li>
+          <button onClick={handleLogout} className="logout-btn">
+            <FaSignOutAlt className="sidebar-icon" />
+            <strong>LOGOUT</strong>
+          </button>
+        </li>
+      </ul>
     </div>
   );
 };

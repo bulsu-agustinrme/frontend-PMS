@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import FormInput from 'components/FormInput';
+import PasswordInput from 'components/PasswordInput';
+import MessageAlert from 'components/MessageAlert';
 import 'assets/ForgotPassword.css';
 
 function ForgotPassword() {
@@ -12,6 +15,16 @@ function ForgotPassword() {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState(''); // success or error
 
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage('');
+        setMessageType('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
   const handleSendCode = async (e) => {
     e.preventDefault();
 
@@ -21,14 +34,13 @@ function ForgotPassword() {
       });
 
       setCodeSent(true);
-      setMessage('✅ Code sent to your email. Use it to reset your password.');
+      setMessage('Code sent to your email. Use it to reset your password.');
       setMessageType('success');
 
-      // Log the numeric code (backend must send numbers only)
-      console.log('Reset Code:', response.data.code);
+      console.log('Reset Code:', response.data.code); // for debugging
     } catch (error) {
       const backendMsg = error.response?.data?.message || 'Failed to send reset code.';
-      setMessage(`❌ ${backendMsg}`);
+      setMessage(backendMsg);
       setMessageType('error');
     }
   };
@@ -37,14 +49,13 @@ function ForgotPassword() {
     e.preventDefault();
 
     if (newPassword !== confirmPassword) {
-      setMessage('❌ Passwords do not match.');
+      setMessage('Passwords do not match.');
       setMessageType('error');
       return;
     }
 
-    // Prevent numeric-only code mismatch
     if (!/^\d+$/.test(code)) {
-      setMessage('❌ Code must be numbers only.');
+      setMessage('Code must be numbers only.');
       setMessageType('error');
       return;
     }
@@ -57,21 +68,21 @@ function ForgotPassword() {
         password_confirmation: confirmPassword,
       });
 
-      // Backend should validate if new password == old password
       if (response.data.error) {
-        setMessage(`❌ ${response.data.error}`);
+        setMessage(response.data.error);
         setMessageType('error');
         return;
       }
 
-      setMessage('✅ Password reset successful! You may now log in.');
+      setMessage('Password reset successful! You may now log in.');
       setMessageType('success');
+
       setTimeout(() => {
-        window.location.href = '/admin/sign-in';
+        window.location.href = '/sign-in';
       }, 2000);
     } catch (error) {
       const backendMsg = error.response?.data?.message || 'Failed to reset password.';
-      setMessage(`❌ ${backendMsg}`);
+      setMessage(backendMsg);
       setMessageType('error');
     }
   };
@@ -94,50 +105,48 @@ function ForgotPassword() {
             </p>
 
             <form onSubmit={codeSent ? handleResetPassword : handleSendCode}>
-              <input
+              <FormInput
                 type="email"
+                name="email"
                 placeholder="Email address"
-                className="forgot-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                className="forgot-input"
                 required
                 disabled={codeSent}
               />
 
               {codeSent && (
                 <>
-                  <input
+                  <FormInput
                     type="text"
+                    name="code"
                     placeholder="Enter code"
-                    className="forgot-input"
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
+                    className="forgot-input"
                     required
                   />
-                  <input
-                    type="password"
-                    placeholder="New password"
-                    className="forgot-input"
+
+                  <PasswordInput
+                    name="newPassword"
+                    placeholder="New Password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                  />
-                  <input
-                    type="password"
-                    placeholder="Confirm new password"
                     className="forgot-input"
+                  />
+
+                  <PasswordInput
+                    name="confirmPassword"
+                    placeholder="Confirm Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
+                    className="forgot-input"
                   />
                 </>
               )}
 
-              {message && (
-                <div className={`forgot-message ${messageType}`}>
-                  {message}
-                </div>
-              )}
+              <MessageAlert message={message} type={messageType} />
 
               <button
                 type="submit"

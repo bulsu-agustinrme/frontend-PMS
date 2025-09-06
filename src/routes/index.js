@@ -12,28 +12,47 @@ import Settings from 'pages/Settings';
 import Notifications from 'pages/Notifications';
 import CustomizedParking from 'pages/CustomizedParking';
 
+import ProtectedRoute from "components/ProtectedRoute";
+
 const MainRoutes = () =>{
     return(
         <Router>
             <Routes>
-            <Route path="/sign-in" element={<Login />}/>
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/" element={<Home />}>
-            <Route path="/dashboard" element={<Dashboard />}/>
-            <Route path="/parking-spaces" element={<Parkingspaces />}/>
-            <Route path="/user-list" element={<UserList />}/>
-            <Route path="/edit-parking-space" element={<EditParking />}/>
-            <Route path="/messages" element={<Messages />}/>
-            <Route path="/pending-list" element={<PendingList />}/>
-            <Route path="/settings" element={<Settings />}/>
-            <Route path="/notifications" element={<Notifications />}/>
-            <Route path="/customized-parking" element={<CustomizedParking />}/>
-            </Route>
-            
-    </Routes>
-</Router>
+                <Route path="/sign-in" element={<Login />}/>
+                <Route path="/forgot-password" element={<ForgotPassword />} />
 
+                {/* All protected routes */}
+                <Route path="/" element={<Home />}>
+                    <Route path="/dashboard" element={
+                        <ProtectedRoute><Dashboard /></ProtectedRoute>
+                    }/>
+                    <Route path="/parking-spaces" element={
+                        <ProtectedRoute><Parkingspaces /></ProtectedRoute>
+                    }/>
+                    <Route path="/user-list" element={
+                        <ProtectedRoute><UserList /></ProtectedRoute>
+                    }/>
+                    <Route path="/edit-parking-space" element={
+                        <ProtectedRoute><EditParking /></ProtectedRoute>
+                    }/>
+                    <Route path="/messages" element={
+                        <ProtectedRoute><Messages /></ProtectedRoute>
+                    }/>
+                    <Route path="/pending-list" element={
+                        <ProtectedRoute><PendingList /></ProtectedRoute>
+                    }/>
+                    <Route path="/settings" element={
+                        <ProtectedRoute><Settings /></ProtectedRoute>
+                    }/>
+                    <Route path="/notifications" element={
+                        <ProtectedRoute><Notifications /></ProtectedRoute>
+                    }/>
+                    <Route path="/customized-parking" element={
+                        <ProtectedRoute><CustomizedParking /></ProtectedRoute>
+                    }/>
+                </Route>
+            </Routes>
+        </Router>
     )
 }
 export default MainRoutes;
-
