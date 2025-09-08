@@ -9,7 +9,7 @@ function PasswordInput({ name, value, onChange, className, placeholder }) {
       <input
         type={showPassword ? 'text' : 'password'}
         name={name}
-        placeholder={placeholder || "Password"}   // 👈 use passed placeholder
+        placeholder={placeholder || "Password"}   
         value={value}
         onChange={onChange}
         className={`${className} password-input`}

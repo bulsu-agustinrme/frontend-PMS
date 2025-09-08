@@ -1,4 +1,3 @@
-// utils/auth.js
 export function logout(navigate) {
   // remove token and user info
   localStorage.removeItem("authToken");

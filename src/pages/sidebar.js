@@ -10,6 +10,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import "assets/Sidebar.css";
+import { clearAuth, getToken } from "../utils/auth"; //  use helpers
 
 const Sidebar = () => {
   const location = useLocation();
@@ -17,8 +18,7 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      const token =
-        localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+      const token = getToken(); // centralized token getter
 
       if (token) {
         await axios.post(
@@ -32,13 +32,8 @@ const Sidebar = () => {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      // ✅ Always clear tokens on frontend
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("userName");
-      sessionStorage.removeItem("authToken");
-      sessionStorage.removeItem("userName");
-
-      // ✅ Redirect to sign-in
+      // clear tokens in one call
+      clearAuth();
       navigate("/sign-in");
     }
   };
@@ -46,8 +41,8 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div>
-        {/* Logo */}
-        <a href="/dashboard" className="sidebar-logo">
+        {/* Logo (not clickable) */}
+        <div className="sidebar-logo">
           <img
             src={require("assets/images/logo.png")}
             alt="Logo"
@@ -57,7 +52,7 @@ const Sidebar = () => {
             <div className="logo-line1">PARKING MANAGEMENT</div>
             <div className="logo-line2">SYSTEM</div>
           </div>
-        </a>
+        </div>
 
         {/* Menu */}
         <ul className="sidebar-menu">

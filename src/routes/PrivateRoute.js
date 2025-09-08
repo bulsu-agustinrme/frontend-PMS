@@ -1,23 +1,11 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import PrivateRoute from "./PrivateRoute";
-import Dashboard from "./pages/Dashboard";
-import SignIn from "./pages/SignIn";
+import React from "react";
+import { Navigate } from "react-router-dom";
 
-function App() {
-  return (
-    <Router>
-      <Routes>
-        {/* Public route */}
-        <Route path="/sign-in" element={<SignIn />} />
+const PrivateRoute = ({ children }) => {
+  const token =
+    localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
 
-        {/* Protected routes */}
-        <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          {/* Add more protected routes here */}
-        </Route>
-      </Routes>
-    </Router>
-  );
-}
+  return token ? children : <Navigate to="/login" replace />;
+};
 
-export default App;
+export default PrivateRoute;
