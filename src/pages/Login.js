@@ -5,7 +5,7 @@ import FormInput from "components/FormInput";
 import PasswordInput from "components/PasswordInput";
 import MessageAlert from "components/MessageAlert";
 import "assets/Login.css";
-import { getToken, setAuth } from "../utils/auth"; //  use centralized auth
+import { getToken, setAuth } from "../utils/auth"; // ✅ centralized auth
 
 function Login() {
   const [values, setValues] = useState({ email: "", password: "" });
@@ -14,7 +14,7 @@ function Login() {
   const [messageType, setMessageType] = useState("");
   const navigate = useNavigate();
 
-  //  Auto-redirect if already logged in
+  // ✅ Auto-redirect if already logged in
   useEffect(() => {
     const token = getToken();
     if (token) {
@@ -22,7 +22,7 @@ function Login() {
     }
   }, [navigate]);
 
-  //  Clear alerts after 4s
+  // ✅ Auto-clear alerts after 4s
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => setMessage(""), 4000);
@@ -38,19 +38,15 @@ function Login() {
     e.preventDefault();
     const { email, password } = values;
 
-    //  Simple validation
-    if (!email && !password) {
-      setMessage("Please enter your email address and password");
-      setMessageType("error");
-      return;
-    }
-    if (!email) {
-      setMessage("Please enter your email address");
-      setMessageType("error");
-      return;
-    }
-    if (!password) {
-      setMessage("Please enter your password");
+    // ✅ Basic validation
+    if (!email || !password) {
+      setMessage(
+        !email && !password
+          ? "Please enter your email address and password"
+          : !email
+          ? "Please enter your email address"
+          : "Please enter your password"
+      );
       setMessageType("error");
       return;
     }
@@ -63,11 +59,11 @@ function Login() {
       });
 
       const backendMessage = response.data?.message;
-      const token = response.data?.data?.token; //  nested in data
+      const token = response.data?.data?.token; // nested in "data"
       const userName = response.data?.data?.name;
 
       if (backendMessage === "Login Successfully" && token) {
-        //  Centralized auth storage
+        // ✅ Save auth with rememberMe (30 days if checked)
         setAuth(token, userName, rememberMe);
 
         setMessage("Login Successfully!");
@@ -149,7 +145,9 @@ function Login() {
           <div className="login-overlay">
             <h3 className="login-banner-title">BULACAN STATE UNIVERSITY</h3>
             <h4 className="login-banner-sub">PARKING MANAGEMENT SYSTEM</h4>
-            <p className="login-banner-tagline">Drive In. Park Smart. Move On.</p>
+            <p className="login-banner-tagline">
+              Drive In. Park Smart. Move On.
+            </p>
           </div>
         </div>
       </div>
