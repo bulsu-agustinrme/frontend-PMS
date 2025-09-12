@@ -62,7 +62,7 @@ const Settings = () => {
   const handleDeleteAccount = async () => {
     if (
       !window.confirm(
-        "Are you sure you want to delete your account? This will remove your profile and access, but certain records may remain for audit purposes."
+        "Are you sure you want to delete your account? This action cannot be undone."
       )
     )
       return;
@@ -140,8 +140,7 @@ const Settings = () => {
         <h3>Delete account</h3>
         <p>
           Would you like to delete your account? <br />
-          Deleting your account will permanently remove your profile and access
-          to the system. Some records may still be kept for audit and security.
+          Deleting your account will permanently remove your profile and access to the system.
         </p>
         <button
           className="danger-link"

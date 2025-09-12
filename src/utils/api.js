@@ -3,7 +3,7 @@ import { getToken } from "./auth";
 
 // Create axios instance with base API URL
 const api = axios.create({
-  baseURL: "http://localhost:8000/api", // 🔹 adjust if your Laravel API is hosted elsewhere
+  baseURL: "http://localhost:8000/api", //  adjust if your Laravel API is hosted elsewhere
 });
 
 // Attach token to requests if available

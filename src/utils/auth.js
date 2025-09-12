@@ -1,6 +1,6 @@
 import api from "./api"; // axios instance
 
-// ✅ Get token with expiry check
+// Get token with expiry check
 export const getToken = () => {
   const authData =
     JSON.parse(localStorage.getItem("authData")) ||
@@ -16,7 +16,7 @@ export const getToken = () => {
   return authData.token;
 };
 
-// ✅ Get username with expiry check
+// Get username with expiry check
 export const getUserName = () => {
   const authData =
     JSON.parse(localStorage.getItem("authData")) ||
@@ -32,7 +32,7 @@ export const getUserName = () => {
   return authData.userName;
 };
 
-// ✅ Get email with expiry check
+// Get email with expiry check
 export const getUserEmail = () => {
   const authData =
     JSON.parse(localStorage.getItem("authData")) ||
@@ -48,7 +48,7 @@ export const getUserEmail = () => {
   return authData.email;
 };
 
-// ✅ Save (token + userName + email) with optional expiry (30 days if remember = true)
+// Save (token + userName + email) with optional expiry (30 days if remember = true)
 export const setAuth = (token, userName = "", email = "", remember = false) => {
   const authData = {
     token,
@@ -66,13 +66,13 @@ export const setAuth = (token, userName = "", email = "", remember = false) => {
   }
 };
 
-// ✅ Clear everything
+// Clear everything
 export const clearAuth = () => {
   localStorage.removeItem("authData");
   sessionStorage.removeItem("authData");
 };
 
-// ✅ Logout (frontend only)
+// Logout (frontend only)
 export const logout = (navigate) => {
   clearAuth();
   if (navigate) {
@@ -82,7 +82,7 @@ export const logout = (navigate) => {
   }
 };
 
-// ✅ Delete account + auto logout
+//  Delete account + auto logout
 export const deleteAccount = async () => {
   try {
     await api.delete("/account");
