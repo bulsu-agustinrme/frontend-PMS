@@ -1,30 +1,222 @@
-import React, { useState } from 'react';
-import 'assets/Settings.css';
+import React, { useState, useEffect } from "react";
+import "assets/Settings.css";
+import api from "utils/api";
+import { deleteAccount } from "utils/auth";
+import MessageAlert from "components/MessageAlert";
+import Modal from "components/Modal";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
+const PasswordInput = ({ value, onChange, placeholder, name }) => {
+  const [show, setShow] = useState(false);
+
+  return (
+    <div className="password-input-wrapper">
+      <input
+        type={show ? "text" : "password"}
+        value={value}
+        onChange={onChange}
+        name={name}
+        required
+        className={value ? "filled" : ""}
+      />
+      <label>{placeholder}</label>
+      <button
+        type="button"
+        className="password-toggle-btn"
+        onClick={() => setShow(!show)}
+      >
+        {show ? <FaEyeSlash /> : <FaEye />}
+      </button>
+    </div>
+  );
+};
 
 const Settings = () => {
-  const [name, setName] = useState("John Doe");
-  const [email, setEmail] = useState("email@private.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
-  const handleSavePassword = () => {
-    alert("Password updated!");
+  // Modal states
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+
+  // Fetch account data
+  useEffect(() => {
+    api
+      .get("/account")
+      .then((res) => {
+        if (res.data) {
+          setName(res.data.name || "User");
+          setEmail(res.data.email || "");
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to load account:", err);
+        setMessage("Failed to load account data");
+        setMessageType("error");
+      });
+  }, []);
+
+  // Auto-hide message
+  useEffect(() => {
+    if (!message) return;
+    const timer = setTimeout(() => {
+      setMessage("");
+      setMessageType("");
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [message]);
+
+  // Update password
+  const handleSavePassword = async () => {
+    const errors = [];
+
+    if (!currentPassword) errors.push("Current password is required.");
+    if (!newPassword) errors.push("New password is required.");
+    if (!confirmPassword) errors.push("Please confirm your new password.");
+    if (newPassword && confirmPassword && newPassword !== confirmPassword) {
+      errors.push("New password and confirmation do not match.");
+    }
+    if (currentPassword && newPassword && currentPassword === newPassword) {
+      errors.push("New password cannot be the same as the current password.");
+    }
+
+    if (errors.length > 0) {
+      setMessage(errors[0]);
+      setMessageType("error");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+    try {
+      const res = await api.post("/account/password", {
+        current_password: currentPassword,
+        new_password: newPassword,
+        new_password_confirmation: confirmPassword,
+      });
+
+      setMessage(res.data.message || "Password updated successfully!");
+      setMessageType("success");
+
+      setNewPassword("");
+      setConfirmPassword("");
+      setCurrentPassword("");
+    } catch (err) {
+      console.error("Password update failed:", err);
+      setMessage(err.response?.data?.message || "Failed to update password");
+      setMessageType("error");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeleteAccount = () => {
-    alert("Account deleted!");
+  // Update name
+  const handleSaveName = async () => {
+    if (!newName.trim()) {
+      setMessage("Name cannot be empty");
+      setMessageType("error");
+      return;
+    }
+
+    if (newName.trim() === name) {
+      setMessage("You must change your name before saving");
+      setMessageType("error");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api.post("/account/update-name", { name: newName });
+      setName(newName);
+      setMessage(res.data.message || "Name updated successfully!");
+      setMessageType("success");
+      setIsNameModalOpen(false);
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Failed to update name");
+      setMessageType("error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update email
+  const handleSaveEmail = async () => {
+    if (!newEmail.trim()) {
+      setMessage("Email cannot be empty");
+      setMessageType("error");
+      return;
+    }
+
+    if (newEmail.trim() === email) {
+      setMessage("You must change your email before saving");
+      setMessageType("error");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await api.post("/account/update-email", { email: newEmail });
+      setEmail(newEmail);
+      setMessage(res.data.message || "Email updated successfully!");
+      setMessageType("success");
+      setIsEmailModalOpen(false);
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Failed to update email");
+      setMessageType("error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Delete account
+  const handleDeleteAccount = async () => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      )
+    )
+      return;
+
+    setLoading(true);
+    try {
+      await deleteAccount();
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Failed to delete account");
+      setMessageType("error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="settings-container">
-      <h2>Account settings</h2>
+      <h2>Account Settings</h2>
+
+      <MessageAlert message={message} type={messageType} />
 
       {/* Name Section */}
       <section className="settings-section">
         <h3>Name</h3>
         <p>
           Your name is <span className="highlight">{name}</span>.
-          <button className="link-btn">Change</button>
+          <button
+            className="link-btn"
+            onClick={() => {
+              setNewName(name);
+              setIsNameModalOpen(true);
+            }}
+          >
+            Change
+          </button>
         </p>
       </section>
 
@@ -33,7 +225,15 @@ const Settings = () => {
         <h3>Email address</h3>
         <p>
           Your email address is <span className="highlight">{email}</span>.
-          <button className="link-btn">Change</button>
+          <button
+            className="link-btn"
+            onClick={() => {
+              setNewEmail(email);
+              setIsEmailModalOpen(true);
+            }}
+          >
+            Change
+          </button>
         </p>
       </section>
 
@@ -41,23 +241,36 @@ const Settings = () => {
       <section className="settings-section">
         <h3>Password</h3>
         <div className="password-group">
-          <input 
-            type="password" 
-            placeholder="New password" 
-            value={newPassword} 
-            onChange={(e) => setNewPassword(e.target.value)} 
+          <PasswordInput
+            name="currentPassword"
+            placeholder="Current password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
           />
-          <input 
-            type="password" 
-            placeholder="Current password" 
-            value={currentPassword} 
-            onChange={(e) => setCurrentPassword(e.target.value)} 
+          <PasswordInput
+            name="newPassword"
+            placeholder="New password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <PasswordInput
+            name="confirmPassword"
+            placeholder="Confirm new password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
         <p className="small-text">
-          Can't remember your current password? <a href="#">Reset your password</a>
+          Can't remember your current password?{" "}
+          <a href="/settings-reset-password">Reset your password</a>
         </p>
-        <button className="primary-btn" onClick={handleSavePassword}>Save password</button>
+        <button
+          className="primary-btn"
+          onClick={handleSavePassword}
+          disabled={loading}
+        >
+          {loading ? "Saving..." : "Save password"}
+        </button>
       </section>
 
       {/* Delete Account Section */}
@@ -65,292 +278,66 @@ const Settings = () => {
         <h3>Delete account</h3>
         <p>
           Would you like to delete your account? <br />
-          Deleting your account will remove all the content associated with it.
+          Deleting your account will permanently remove your profile and access
+          to the system.
         </p>
-        <button className="danger-link" onClick={handleDeleteAccount}>
-          I want to delete my account
-        </button>
-      </section>
-    </div>
-  );
-};
-
-export default Settings;
-import React, { useState, useEffect } from "react";
-import PasswordInput from "../components/PasswordInput";
-import api from "../api"; // axios instance with baseURL + auth header
-import "assets/Settings.css";
-
-const Settings = () => {
-  const [profilePic, setProfilePic] = useState(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [formData, setFormData] = useState({
-    current_password: "",
-    new_password: "",
-    confirm_password: ""
-  });
-  const [message, setMessage] = useState("");
-
-  // Modal states
-  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
-  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-
-  // Temporary inputs for modals
-  const [tempName, setTempName] = useState("");
-  const [tempEmail, setTempEmail] = useState("");
-  const [resetEmail, setResetEmail] = useState("");
-
-// Fetch account data on load
-useEffect(() => {
-  api.get("/account")
-    .then(res => {
-      console.log("Account response:", res.data); // 👈 check full response dito
-      console.log("User ID:", res.data.id);       // 👈 specific check kung may id
-      console.log("Name:", res.data.name);        // 👈 specific check name
-      console.log("Email:", res.data.email);      // 👈 specific check email
-
-      setName(res.data.name);
-      setEmail(res.data.email);
-      setProfilePic(
-        res.data.profile_pic
-          ? `http://127.0.0.1:8000/storage/${res.data.profile_pic}`
-          : null
-      );
-      setTempName(res.data.name);
-      setTempEmail(res.data.email);
-    })
-    .catch(() => setMessage("Failed to load account"));
-}, []);
-
-
-  // Profile picture upload
-  const handleProfilePicChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const data = new FormData();
-    data.append("name", name);
-    data.append("email", email);
-    data.append("photo", file);
-
-    try {
-      const res = await api.post("/account/update", data);
-      setProfilePic(`http://127.0.0.1:8000/storage/${res.data.user.profile_pic}`);
-      setMessage(res.data.message);
-    } catch (err) {
-      setMessage(err.response?.data?.message || "Failed to update picture");
-    }
-  };
-
-  // Change password
-  const handleSavePassword = async (e) => {
-    e.preventDefault();
-    if (formData.new_password !== formData.confirm_password) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    try {
-      const res = await api.post("/account/change-password", {
-        current_password: formData.current_password,
-        new_password: formData.new_password,
-        new_password_confirmation: formData.confirm_password
-      });
-      setMessage(res.data.message);
-      setFormData({ current_password: "", new_password: "", confirm_password: "" });
-    } catch (err) {
-      setMessage(err.response?.data?.message || "Password update failed");
-    }
-  };
-
-  // Delete account
-  const handleDeleteAccount = async () => {
-    if (!window.confirm("Are you sure you want to delete your account?")) return;
-    try {
-      await api.delete("/account/delete");
-      localStorage.removeItem("auth_token");
-      window.location.href = "/login";
-    } catch {
-      setMessage("Failed to delete account");
-    }
-  };
-
-  // Save name change
-  const handleSaveName = async () => {
-    try {
-      const res = await api.post("/account/update", { name: tempName, email });
-      setName(res.data.user.name);
-      setIsNameModalOpen(false);
-      setMessage(res.data.message);
-    } catch {
-      setMessage("Failed to update name");
-    }
-  };
-
-  // Save email change
-  const handleSaveEmail = async () => {
-    try {
-      const res = await api.post("/account/update", { name, email: tempEmail });
-      setEmail(res.data.user.email);
-      setIsEmailModalOpen(false);
-      setMessage(res.data.message);
-    } catch {
-      setMessage("Failed to update email");
-    }
-  };
-
-  // Forgot password
-  const handleResetPassword = async () => {
-    if (!resetEmail) {
-      alert("Please enter your email");
-      return;
-    }
-    try {
-      await api.post("/forgot-password", { email: resetEmail });
-      setIsResetModalOpen(false);
-      setMessage(`Password reset code sent to ${resetEmail}`);
-    } catch {
-      setMessage("Failed to send reset email");
-    }
-  };
-
-  return (
-    <div className="settings-container">
-      <h2>Account Settings</h2>
-      {message && <p className="status-message">{message}</p>}
-
-      {/* Profile Picture */}
-      <section className="settings-section">
-        <h3>Profile Picture</h3>
-        <div className="profile-pic-container">
-          <img
-            src={profilePic || "https://via.placeholder.com/150"}
-            alt="Profile"
-            className="profile-pic"
-          />
-          <label className="upload-btn">
-            Upload
-            <input type="file" accept="image/*" onChange={handleProfilePicChange} hidden />
-          </label>
-        </div>
-      </section>
-
-      {/* Name */}
-      <section className="settings-section">
-        <h3>Name</h3>
-        <p>
-          Your name is <span className="highlight">{name}</span>.
-          <button className="link-btn" onClick={() => setIsNameModalOpen(true)}>Change</button>
-        </p>
-      </section>
-
-      {/* Email */}
-      <section className="settings-section">
-        <h3>Email address</h3>
-        <p>
-          Your email is <span className="highlight">{email}</span>.
-          <button className="link-btn" onClick={() => setIsEmailModalOpen(true)}>Change</button>
-        </p>
-      </section>
-
-      {/* Password */}
-      <section className="settings-section">
-        <h3>Password</h3>
-        <form onSubmit={handleSavePassword} className="password-form">
-          <PasswordInput
-            name="current_password"
-            placeholder="Current Password"
-            value={formData.current_password}
-            onChange={(e) => setFormData({ ...formData, current_password: e.target.value })}
-          />
-          <PasswordInput
-            name="new_password"
-            placeholder="New Password"
-            value={formData.new_password}
-            onChange={(e) => setFormData({ ...formData, new_password: e.target.value })}
-          />
-          <PasswordInput
-            name="confirm_password"
-            placeholder="Confirm Password"
-            value={formData.confirm_password}
-            onChange={(e) => setFormData({ ...formData, confirm_password: e.target.value })}
-          />
-          <p className="small-text">
-            Can't remember your current password?{" "}
-            <button type="button" className="link-btn" onClick={() => setIsResetModalOpen(true)}>
-              Reset your password
-            </button>
-          </p>
-          <button type="submit" className="primary-btn">Save password</button>
-        </form>
-      </section>
-
-      {/* Delete Account */}
-      <section className="settings-section">
-        <h3>Delete account</h3>
-        <p>Deleting your account will remove all content permanently.</p>
-        <button className="danger-link" onClick={handleDeleteAccount}>
+        <button
+          className="danger-link"
+          onClick={handleDeleteAccount}
+          disabled={loading}
+        >
           I want to delete my account
         </button>
       </section>
 
       {/* Name Modal */}
-      {isNameModalOpen && (
-        <Modal title="Change Name" value={tempName} setValue={setTempName} onSave={handleSaveName} onClose={() => setIsNameModalOpen(false)} />
-      )}
+        <Modal
+          isOpen={isNameModalOpen}
+          onClose={() => setIsNameModalOpen(false)}
+          title="Edit Name"
+        >
+          <input
+            type="text"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            className="modal-input"
+          />
+          <div className="modal-actions">
+            <button
+              className="primary-btn"
+              onClick={handleSaveName}
+              disabled={loading || newName.trim() === "" || newName.trim() === name} // disabled if no change
+            >
+              Save
+            </button>
+          </div>
+        </Modal>
 
-      {/* Email Modal */}
-      {isEmailModalOpen && (
-        <Modal title="Change Email" value={tempEmail} setValue={setTempEmail} onSave={handleSaveEmail} onClose={() => setIsEmailModalOpen(false)} />
-      )}
+        {/* Email Modal */}
+        <Modal
+          isOpen={isEmailModalOpen}
+          onClose={() => setIsEmailModalOpen(false)}
+          title="Edit Email"
+        >
+          <input
+            type="email"
+            value={newEmail}
+            onChange={(e) => setNewEmail(e.target.value)}
+            className="modal-input"
+          />
+          <div className="modal-actions">
+            <button
+              className="primary-btn"
+              onClick={handleSaveEmail}
+              disabled={loading || newEmail.trim() === "" || newEmail.trim() === email} // disabled if no change
+            >
+              Save
+            </button>
+          </div>
+        </Modal>
 
-      {/* Reset Password Modal */}
-      {isResetModalOpen && (
-        <Modal title="Reset Password" value={resetEmail} setValue={setResetEmail} onSave={handleResetPassword} onClose={() => setIsResetModalOpen(false)} placeholder="Email" />
-      )}
     </div>
   );
-};
-
-// Reusable Modal
-const Modal = ({ title, value, setValue, onSave, onClose, placeholder }) => (
-  <div style={modalStyle}>
-    <div style={modalContentStyle}>
-      <h3>{title}</h3>
-      <input
-        type={placeholder === "Email" ? "email" : "text"}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder={placeholder || ""}
-      />
-      <div style={{ marginTop: "10px" }}>
-        <button onClick={onSave} className="primary-btn">Save</button>
-        <button onClick={onClose} className="secondary-btn">Cancel</button>
-      </div>
-    </div>
-  </div>
-);
-
-// Modal Styles
-const modalStyle = {
-  position: "fixed",
-  top: 0, left: 0,
-  width: "100%", height: "100%",
-  background: "rgba(0,0,0,0.6)",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  zIndex: 1000
-};
-
-const modalContentStyle = {
-  background: "white",
-  padding: "20px",
-  borderRadius: "8px",
-  width: "300px",
-  textAlign: "center"
 };
 
 export default Settings;

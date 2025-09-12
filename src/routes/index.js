@@ -11,6 +11,7 @@ import PendingList from 'pages/PendingList';
 import Settings from 'pages/Settings';
 import Notifications from 'pages/Notifications';
 import CustomizedParking from 'pages/CustomizedParking';
+import SettingsResetPassword from 'pages/SettingsResetPassword';
 
 import ProtectedRoute from "components/ProtectedRoute";
 
@@ -49,6 +50,9 @@ const MainRoutes = () =>{
                     }/>
                     <Route path="/customized-parking" element={
                         <ProtectedRoute><CustomizedParking /></ProtectedRoute>
+                    }/>
+                   <Route path="/settings-reset-password" element={
+                        <ProtectedRoute><SettingsResetPassword /></ProtectedRoute>
                     }/>
                 </Route>
             </Routes>
