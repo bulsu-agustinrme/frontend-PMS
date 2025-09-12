@@ -59,12 +59,13 @@ function Login() {
       });
 
       const backendMessage = response.data?.message;
-      const token = response.data?.data?.token; // nested in "data"
+      const token = response.data?.data?.token; // token from backend
       const userName = response.data?.data?.name;
+      const userEmail = response.data?.data?.email; // ✅ fetch email from backend
 
       if (backendMessage === "Login Successfully" && token) {
-        // ✅ Save auth with rememberMe (30 days if checked)
-        setAuth(token, userName, rememberMe);
+        // ✅ Save auth correctly with email + remember
+        setAuth(token, userName, userEmail, rememberMe);
 
         setMessage("Login Successfully!");
         setMessageType("success");

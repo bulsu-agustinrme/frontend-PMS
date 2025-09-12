@@ -8,16 +8,21 @@ import {
   FaCog,
   FaBell,
 } from 'react-icons/fa';
+import { getUserName } from 'utils/auth'; //  import helper
 import 'assets/Dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const userName = getUserName() || "User"; // fallback if no name found
 
   return (
     <div className="dashboard">
-      <h2 className="dashboard-title">Welcome back, <strong>Admin Joseph!</strong></h2>
+      <h2 className="dashboard-title">
+        Welcome back, <strong>{userName}!</strong>
+      </h2>
+
       <div className="dashboard-grid">
-        <div className="card card-tall" onClick={() => navigate('/parking-spaces')}>
+        <div className="card" onClick={() => navigate('/parking-spaces')}>
           <FaParking className="card-icon" />
           <h3>Parking Spaces</h3>
         </div>
@@ -42,7 +47,7 @@ const Dashboard = () => {
           <h3>Messages</h3>
         </div>
 
-        <div className="card card-wide" onClick={() => navigate('/settings')}>
+        <div className="card" onClick={() => navigate('/settings')}>
           <FaCog className="card-icon" />
           <h3>Settings</h3>
         </div>

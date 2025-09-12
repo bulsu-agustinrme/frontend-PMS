@@ -11,6 +11,37 @@
   justify-content: space-between;
 }
 
+.sidebar {
+  background-color: #c04a4a;
+  width: 250px;
+  min-width: 250px;
+  height: 100vh;
+  color: white;
+  padding: 20px;
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  /* 🔑 Make it fixed */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; /* stays above content */
+}
+
+/* Make sure the page content doesn’t overlap sidebar */
+.main-content {
+  margin-left: 250px; /* same width as sidebar */
+  padding: 20px;
+}
+
+/* Remove scroll inside sidebar */
+.sidebar::-webkit-scrollbar {
+  display: none; /* hides scrollbar */
+}
+
+
 .sidebar a {
   text-decoration: none;
   outline: none;
@@ -98,3 +129,4 @@
 .logout-btn {
   font-weight: bold;
 }
+
