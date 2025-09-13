@@ -85,7 +85,7 @@ export const logout = (navigate) => {
 //  Delete account + auto logout
 export const deleteAccount = async () => {
   try {
-    await api.delete("/account");
+    await api.delete("/account/delete");
     clearAuth();
     window.location.href = "/sign-in";
   } catch (error) {
