@@ -4,7 +4,7 @@
 .settings-container {
   padding: 40px;
   background: linear-gradient(135deg, #fdfdfd, #f5f7fb);
-  min-height: 100vh;
+  min-height: 105vh;
   font-family: 'Poppins', sans-serif;
   color: #333;
 
@@ -209,14 +209,17 @@
 /* ========================
    Modal
    ======================== */
+/* ========================
+   Modal
+   ======================== */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 15, 15, 0.6);
-  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.6); /* lighter white overlay */
+  backdrop-filter: blur(10px);           /* subtle blur */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -225,13 +228,13 @@
 }
 
 .modal-content {
-  background: #fff;
+  background: #ffffff; /* pure white modal */
   padding: 35px 30px;
   border-radius: 16px;
   max-width: 480px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15); /* softer shadow */
   animation: scaleIn 0.25s ease forwards;
   position: relative;
 }
@@ -321,12 +324,13 @@
   to { opacity: 1; transform: scale(1); }
 }
 
+
 /* ========================
    Profile Card
    ======================== */
 .profile-card {
   background: #fff;
-  padding: 25px;
+  padding: 20px;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   display: flex;
@@ -436,3 +440,88 @@
     flex-direction: column;
   }
 }
+/* ========================
+   Profile Picture + Fallback
+   ======================== */
+.profile-pic-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: #f0f2f5; /* neutral background */
+  border: 4px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.profile-pic-wrapper:hover {
+  transform: scale(1.05);
+  border-color: #3b49df;
+}
+
+/* Profile picture */
+.profile-pic {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Fallback initials */
+.profile-fallback {
+  font-size: 3rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 4px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.profile-fallback:hover {
+  transform: scale(1.05);
+  border-color: #3b49df;
+}
+
+/* ========================
+   Modal Danger Button
+   ======================== */
+.danger-btn {
+  padding: 12px 22px;
+  background: linear-gradient(135deg, #e63946, #d62839); /* red gradient */
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(230, 57, 70, 0.25);
+}
+
+.danger-btn:hover {
+  background: linear-gradient(135deg, #b22234, #a71d2a); /* darker red */
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(230, 57, 70, 0.35);
+}
+
+.danger-btn:disabled {
+  background: #f1b6bb;
+  cursor: not-allowed;
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+

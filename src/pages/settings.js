@@ -23,6 +23,7 @@ const PasswordInput = ({ value, onChange, placeholder, name }) => {
       <button
         type="button"
         className="password-toggle-btn"
+        aria-label={show ? "Hide password" : "Show password"}
         onClick={() => setShow(!show)}
       >
         {show ? <FaEyeSlash /> : <FaEye />}
@@ -42,18 +43,30 @@ const Settings = () => {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  // Loading states
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [resetLoading, setResetLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Alerts
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState("");
+
+  // Modals
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // Reset
   const [resetEmail, setResetEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [resetNewPassword, setResetNewPassword] = useState("");
   const [resetConfirmPassword, setResetConfirmPassword] = useState("");
 
-  // Fetch account data
+  // Fetch account
   useEffect(() => {
     api
       .get("/account")
@@ -89,6 +102,7 @@ const Settings = () => {
     }
   };
 
+  // Profile update
   const handleSaveProfile = async () => {
     if (!newName.trim() || !newEmail.trim()) {
       setMessage("Name and email cannot be empty");
@@ -101,7 +115,7 @@ const Settings = () => {
     formData.append("email", newEmail);
     if (newProfilePic) formData.append("profile_pic", newProfilePic);
 
-    setLoading(true);
+    setProfileLoading(true);
     try {
       const res = await api.post("/account/update-profile", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -109,7 +123,7 @@ const Settings = () => {
       const updatedUser = res.data.user;
       setName(updatedUser.name || newName);
       setEmail(updatedUser.email || newEmail);
-      setProfilePic(`${updatedUser.profile_pic || profilePic}?t=${Date.now()}`);
+      setProfilePic(updatedUser.profile_pic || profilePic);
       setMessage(res.data.message || "Profile updated successfully!");
       setMessageType("success");
       setIsEditModalOpen(false);
@@ -119,10 +133,11 @@ const Settings = () => {
       setMessage(err.response?.data?.message || "Failed to update profile");
       setMessageType("error");
     } finally {
-      setLoading(false);
+      setProfileLoading(false);
     }
   };
 
+  // Password update
   const handleSavePassword = async () => {
     const errors = [];
     if (!currentPassword) errors.push("Current password is required.");
@@ -134,12 +149,12 @@ const Settings = () => {
       errors.push("New password cannot be the same as the current password.");
 
     if (errors.length > 0) {
-      setMessage(errors[0]);
+      setMessage(errors.join("\n"));
       setMessageType("error");
       return;
     }
 
-    setLoading(true);
+    setPasswordLoading(true);
     try {
       const res = await api.post("/account/password", {
         current_password: currentPassword,
@@ -155,17 +170,18 @@ const Settings = () => {
       setMessage(err.response?.data?.message || "Failed to update password");
       setMessageType("error");
     } finally {
-      setLoading(false);
+      setPasswordLoading(false);
     }
   };
 
+  // Reset password
   const handleResetPassword = async () => {
     if (!resetEmail.trim()) {
       setMessage("Please enter your email");
       setMessageType("error");
       return;
     }
-    setLoading(true);
+    setResetLoading(true);
     try {
       const res = await api.post("/forgot-password", { email: resetEmail });
       setMessage(res.data.message || "Password reset code sent!");
@@ -176,7 +192,7 @@ const Settings = () => {
       setMessage(err.response?.data?.message || "Failed to send reset code");
       setMessageType("error");
     } finally {
-      setLoading(false);
+      setResetLoading(false);
     }
   };
 
@@ -192,7 +208,7 @@ const Settings = () => {
       return;
     }
 
-    setLoading(true);
+    setResetLoading(true);
     try {
       const res = await api.post("/reset-password", {
         email: resetEmail,
@@ -209,78 +225,94 @@ const Settings = () => {
       setMessage(err.response?.data?.message || "Failed to reset password");
       setMessageType("error");
     } finally {
-      setLoading(false);
+      setResetLoading(false);
     }
   };
 
+  // Delete
   const handleDeleteAccount = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
-      )
-    )
-      return;
-    setLoading(true);
+    setDeleteLoading(true);
     try {
       await deleteAccount();
     } catch (err) {
       setMessage(err.response?.data?.message || "Failed to delete account");
       setMessageType("error");
     } finally {
-      setLoading(false);
+      setDeleteLoading(false);
     }
   };
 
   return (
     <div className="settings-container">
       <h2>Account Settings</h2>
-      <MessageAlert message={message} type={messageType} />
-
+      <MessageAlert
+        message={message}
+        type={messageType}
+        renderMessage={(msg) =>
+          msg.split("\n").map((line, i) => (
+            <span key={i}>
+              {line}
+              <br />
+            </span>
+          ))
+        }
+      />
       <div className="settings-main">
-        {/* Profile Card */}
-        <section className="profile-card">
-          <h3 className="profile-title">Account Information</h3>
-          <div className="profile-pic-container">
-            <label htmlFor="profilePicInput" className="profile-pic-label">
-              <div className="profile-pic-wrapper">
-                {loading && preview && (
-                  <div className="profile-pic-loading">
-                    <div className="spinner"></div>
-                  </div>
-                )}
-                <img
-                  src={
-                    preview ||
-                    (profilePic ? `${profilePic}?t=${Date.now()}` : "/default-avatar.png")
-                  }
-                  alt="Profile"
-                  className="profile-pic"
-                />
+    {/* Profile Card */}
+    <section className="profile-card">
+      <h3 className="profile-title">Account Information</h3>
+      <div className="profile-pic-container">
+        <label htmlFor="profilePicInput" className="profile-pic-label">
+          <div className="profile-pic-wrapper">
+            {profileLoading && (
+              <div className="profile-pic-loading">
+                <div className="spinner"></div>
               </div>
-            </label>
-            <input
-              id="profilePicInput"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              style={{ display: "none" }}
-            />
+            )}
+
+            {preview || profilePic ? (
+              <img
+                src={preview || `${profilePic}?t=${Date.now()}`}
+                alt="Profile"
+                className="profile-pic"
+              />
+            ) : (
+              <div className="profile-fallback">
+                {name
+                  ?.split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .substring(0, 2)
+                  .toUpperCase()}
+              </div>
+            )}
           </div>
-          <div className="profile-info">
-            <h3>{name}</h3>
-            <p>{email}</p>
-            <button
-              className="link-btn"
-              onClick={() => {
-                setNewName(name);
-                setNewEmail(email);
-                setIsEditModalOpen(true);
-              }}
-            >
-              Edit Profile
-            </button>
-          </div>
-        </section>
+        </label>
+
+        <input
+          id="profilePicInput"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          style={{ display: "none" }}
+        />
+      </div>
+
+      <div className="profile-info">
+        <h3>{name}</h3>
+        <p>{email}</p>
+        <button
+          className="link-btn"
+          onClick={() => {
+            setNewName(name);
+            setNewEmail(email);
+            setIsEditModalOpen(true);
+          }}
+        >
+          Edit Profile
+        </button>
+      </div>
+    </section>
 
         {/* Password Section */}
         <section className="settings-section password-section">
@@ -318,9 +350,9 @@ const Settings = () => {
           <button
             className="primary-btn"
             onClick={handleSavePassword}
-            disabled={loading}
+            disabled={passwordLoading}
           >
-            {loading ? "Saving..." : "Save password"}
+            {passwordLoading ? "Saving..." : "Save password"}
           </button>
         </section>
       </div>
@@ -333,8 +365,8 @@ const Settings = () => {
         </p>
         <button
           className="danger-link"
-          onClick={handleDeleteAccount}
-          disabled={loading}
+          onClick={() => setIsDeleteModalOpen(true)}
+          disabled={deleteLoading}
         >
           I want to delete my account
         </button>
@@ -378,12 +410,15 @@ const Settings = () => {
           placeholder="Enter new email"
         />
         <div className="modal-actions">
+          <button className="secondary-btn" onClick={() => setIsEditModalOpen(false)}>
+            Cancel
+          </button>
           <button
             className="primary-btn"
             onClick={handleSaveProfile}
-            disabled={loading || !newName.trim() || !newEmail.trim()}
+            disabled={profileLoading || !newName.trim() || !newEmail.trim()}
           >
-            Save
+            {profileLoading ? "Saving..." : "Save"}
           </button>
         </div>
       </Modal>
@@ -394,9 +429,7 @@ const Settings = () => {
         onClose={() => setIsResetModalOpen(false)}
         title="Reset Password"
       >
-        <p className="small-text">
-          Enter your email to receive a password reset code.
-        </p>
+        <p className="small-text">Enter your email to receive a password reset code.</p>
         <input
           type="email"
           value={resetEmail}
@@ -405,12 +438,15 @@ const Settings = () => {
           placeholder="Enter your email"
         />
         <div className="modal-actions">
+          <button className="secondary-btn" onClick={() => setIsResetModalOpen(false)}>
+            Cancel
+          </button>
           <button
             className="primary-btn"
             onClick={handleResetPassword}
-            disabled={loading || !resetEmail.trim()}
+            disabled={resetLoading || !resetEmail.trim()}
           >
-            {loading ? "Sending..." : "Send Reset Code"}
+            {resetLoading ? "Sending..." : "Send Reset Code"}
           </button>
         </div>
       </Modal>
@@ -442,12 +478,43 @@ const Settings = () => {
           onChange={(e) => setResetConfirmPassword(e.target.value)}
         />
         <div className="modal-actions">
+          <button className="secondary-btn" onClick={() => setIsVerifyModalOpen(false)}>
+            Cancel
+          </button>
           <button
             className="primary-btn"
             onClick={handleVerifyResetCode}
-            disabled={loading}
+            disabled={resetLoading}
           >
-            {loading ? "Saving..." : "Reset Password"}
+            {resetLoading ? "Saving..." : "Reset Password"}
+          </button>
+        </div>
+      </Modal>
+
+      {/* Delete Confirmation Modal */} 
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Account Deletion"
+      >
+        <p>
+          Are you sure you want to <strong>delete your account</strong>? This action
+          cannot be undone.
+        </p>
+        <div className="modal-actions">
+          <button
+            className="secondary-btn"
+            onClick={() => setIsDeleteModalOpen(false)}
+            disabled={deleteLoading}
+          >
+            Cancel
+          </button>
+          <button
+            className="danger-btn"
+            onClick={handleDeleteAccount}
+            disabled={deleteLoading}
+          >
+            {deleteLoading ? "Deleting..." : "Delete Account"}
           </button>
         </div>
       </Modal>
